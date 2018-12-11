@@ -1,15 +1,9 @@
-import { Client } from 'discord.js';
+import { Client } from "discord.js";
+import { Hooks } from "./hooks";
 
 const client = new Client();
+const hooks = new Hooks(client);
 
-client.on('ready', () => {
-  console.log(`Logged in as ${client.user.tag}!`);
-});
-
-client.on('message', msg => {
-  if (msg.content === 'ping') {
-    msg.reply('pong');
-  }
-});
+hooks.init();
 
 client.login(process.env.API_KEY);
