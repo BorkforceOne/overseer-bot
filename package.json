@@ -2,8 +2,9 @@
   "name": "overseer-bot",
   "version": "0.0.1",
   "description": "A discord bot for MAGIC Bois.",
-  "main": "dist/index.js",
+  "main": "./dist/index.js",
   "scripts": {
+    "start": "node ./dist/index.js",
     "debug": "node -r ts-node/register -r dotenv/config src/index.ts dotenv_config_path=./envs/local/local.env",
     "build": "tsc"
   },
