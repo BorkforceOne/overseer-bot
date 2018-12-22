@@ -22,7 +22,7 @@ export async function bogovoto(bogovote: BogoVote, msg: Message, args: string[])
 		'Woweee we got a neato bogo voto going on here!',
 		`Issue number: ${issue.id}`,
 		'Here\'s the options:\n' + optionsText.join('\n'),
-		'(Vote by using `/voto [issue number] [option number]` or close the voto '
-			+ 'by using `/closo`, and get a list of open voto with `/bogolist <issue number>`)',
+		'(Vote by using `/voto issueId optionId ` or close the voto '
+			+ 'by using `/closo`, and get a list of open voto with `/bogolist [issueId]`)',
 	].join('\n'));
 }
