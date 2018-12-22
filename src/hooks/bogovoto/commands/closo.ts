@@ -40,5 +40,8 @@ export async function closo(bogo: BogoVote, msg: Message, args: string[]) {
 			msg.channel.send(`Alright the votes are in! Let's see who won...`);
 			msg.channel.send(`This time, it's '${winningOption!.content}'`);
 			break;
+		case CloseCode.NO_VOTES:
+			msg.reply('There are no votes for this yet. Not closing the bogovoto yet!');
+			break;
 	}
 }

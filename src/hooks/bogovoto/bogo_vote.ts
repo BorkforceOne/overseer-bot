@@ -35,6 +35,7 @@ export enum CloseCode {
 	ISSUE_DNE,
 	CLOSED,
 	ALREADY_CLOSED,
+	NO_VOTES,
 }
 
 interface IState {
@@ -201,6 +202,10 @@ export class BogoVote extends Hook {
 		const optionsVotedFor = issue.votes
 			.map((vote) => issue.options.find((opt) => opt.id === vote.optionId))
 			.filter((opt) => !!opt) as IOption[];
+		
+		if (optionsVotedFor.length === 0) {
+			return [CloseCode.NO_VOTES];
+		}
 
 		const choiceIndex = Math.floor(Math.random() * optionsVotedFor.length);
 		const winningOption = optionsVotedFor[choiceIndex];
