@@ -1,6 +1,6 @@
 import { BogoVote, CloseCode } from "../bogo_vote";
 import { Message } from "discord.js";
-import { toInt } from "../../../utils/generalUtils";
+import { toIntOrNull } from "../../../utils/generalUtils";
 
 /**
  * Closes a vote and announces the winner!
@@ -13,10 +13,17 @@ export async function closo(bogo: BogoVote, msg: Message, args: string[]) {
 		msg.reply('The usage is `/closo [issueId]`');
 	}
 
-	const issue = bogo.GetIssue(toInt(args[0]));
+	const issueId = toIntOrNull(args[0]);
+
+	if (issueId === null) {
+		msg.reply('I don\'t know what that is');
+		return;
+	}
+
+	const issue = bogo.GetIssue(issueId);
 
 	if (!issue) {
-		msg.reply('I\'m unsure which issue you want to vote for... :(');
+		msg.reply('That bogovote doesn\'t exist, silly!');
 		return;
 	}
 

@@ -1,6 +1,6 @@
 import { BogoVote, VoteCode } from "../bogo_vote";
 import { Message } from "discord.js";
-import { toInt } from "../../../utils/generalUtils";
+import { toIntOrNull } from "../../../utils/generalUtils";
 
 /**
  * Cast a vote
@@ -16,8 +16,13 @@ export async function voto(bogo: BogoVote, msg: Message, args: string[]) {
 		msg.reply('The usage is `/voto [issueId] [optionId]`');
 	}
 
-	const issueId = toInt(args[0]);
-	const optionId = toInt(args[1]);
+	const issueId = toIntOrNull(args[0]);
+	const optionId = toIntOrNull(args[1]);
+
+	if (issueId === null || optionId === null) {
+		msg.reply('I don\'t know what that is!');
+		return;
+	}
 
 	bogo.RegisterUser({
 		guid: msg.author.id,
