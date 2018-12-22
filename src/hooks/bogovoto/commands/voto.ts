@@ -43,6 +43,9 @@ export async function voto(bogo: BogoVote, msg: Message, args: string[]) {
 		case VoteCode.ISSUE_DNE:
 			msg.reply('I\'m unsure which issue you want to vote for... :(');
 			break;
+		case VoteCode.CLOSED_ISSUE:
+			msg.reply(`This issue has already been closed!`);
+			break;
 	}
 
 }

@@ -1,7 +1,6 @@
-import { BogoVote } from "../bogo_vote";
+import { BogoVote, CloseCode } from "../bogo_vote";
 import { Message } from "discord.js";
 import { toInt } from "../../../utils/generalUtils";
-import { IOption } from "../types";
 
 /**
  * Closes a vote and announces the winner!
@@ -21,13 +20,18 @@ export async function closo(bogo: BogoVote, msg: Message, args: string[]) {
 		return;
 	}
 
-	const optionsVotedFor = issue.votes
-		.map((vote) => issue.options.find((opt) => opt.id === vote.optionId))
-		.filter((opt) => !!opt) as IOption[];
+	const [closeCode, winningOption] = bogo.CloseIssue(issue.id);
 
-	const choiceIndex = Math.floor(Math.random() * optionsVotedFor.length);
-	const winningOption = optionsVotedFor[choiceIndex];
-
-	msg.channel.send(`Alright the votes are in! Let's see who won...`);
-	msg.channel.send(`This time, it's '${winningOption.content}'`);
+	switch (closeCode) {
+		case CloseCode.ALREADY_CLOSED:
+			msg.reply(`This bogovoto has already been closed, with the result: '${winningOption!.content}'`);
+			return;
+		case CloseCode.ISSUE_DNE:
+			msg.reply('That bogovote doesn\'t exist, silly!');
+			return;
+		case CloseCode.CLOSED:
+			msg.channel.send(`Alright the votes are in! Let's see who won...`);
+			msg.channel.send(`This time, it's '${winningOption!.content}'`);
+			break;
+	}
 }

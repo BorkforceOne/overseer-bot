@@ -1,6 +1,6 @@
 import { Message, Client } from 'discord.js';
 import { Hook } from '../../hook';
-import { IIssue, IOption, IVote } from './types';
+import { IIssue, IOption, IVote, IssueState } from './types';
 import { SMap } from '../../utils/utilTypes';
 import { bogovoto } from './commands/bogovoto';
 import { voto } from './commands/voto';
@@ -28,6 +28,13 @@ export enum VoteCode {
 	OPTION_DNE,
 	VOTED,
 	SUCCESS,
+	CLOSED_ISSUE,
+}
+
+export enum CloseCode {
+	ISSUE_DNE,
+	CLOSED,
+	ALREADY_CLOSED,
 }
 
 interface IState {
@@ -89,6 +96,7 @@ export class BogoVote extends Hook {
 			id: nextIssueId + 1,
 			options,
 			votes: [],
+			state: IssueState.OPEN,
 		};
 	
 		issues.push(issue);
@@ -145,6 +153,8 @@ export class BogoVote extends Hook {
 		const issue: IIssue | undefined = issues.find(i => i.id === issueId);
 		if (!issue) return [VoteCode.ISSUE_DNE];
 
+		if (issue.state === IssueState.CLOSED) return [VoteCode.CLOSED_ISSUE];
+
 		const option: IOption | undefined = issue.options.find((opt) => opt.id === optionId);
 		if (!option) return [VoteCode.OPTION_DNE];
 
@@ -175,5 +185,29 @@ export class BogoVote extends Hook {
 	
 			return [VoteCode.SUCCESS, option];
 		}
+	}
+
+	public CloseIssue(issueId: number): [CloseCode, IOption?] {
+		const { issues } = this.state.Get();
+
+		const issue: IIssue | undefined = issues.find(i => i.id === issueId);
+		if (!issue) return [CloseCode.ISSUE_DNE];
+
+		if (issue.state === IssueState.CLOSED) {
+			const winningOption = issue.options.find(o => o.id === issue.result);
+			return [CloseCode.ALREADY_CLOSED, winningOption];
+		}
+
+		const optionsVotedFor = issue.votes
+			.map((vote) => issue.options.find((opt) => opt.id === vote.optionId))
+			.filter((opt) => !!opt) as IOption[];
+
+		const choiceIndex = Math.floor(Math.random() * optionsVotedFor.length);
+		const winningOption = optionsVotedFor[choiceIndex];
+
+		issue.result = winningOption.id;
+		issue.state = IssueState.CLOSED;
+
+		return [CloseCode.CLOSED, winningOption];
 	}
 }
