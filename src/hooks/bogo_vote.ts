@@ -39,8 +39,8 @@ export class BogoVote extends Hook {
         case "/voto":
           this.handleVoto(msg, split);
           break;
-        case "/closeo":
-          this.handleCloseo(msg, split);
+        case "/closo":
+          this.handleCloso(msg, split);
           break;
       }
     });
@@ -64,11 +64,11 @@ export class BogoVote extends Hook {
 
     this.issues.push(issue);
 
-    msg.channel.send("Woow we got a neato bogo voto going on here!");
+    msg.channel.send("Woweee we got a neato bogo voto going on here!");
 
     const optionsText = options.map((opt) => `\t${opt.id}) ${opt.content}`);
     msg.channel.send("Here's the options:\n" + optionsText.join("\n"));
-    msg.channel.send("(Vote by using `/voto [option number]` or close the voto by using `/closeo`)");
+    msg.channel.send("(Vote by using `/voto [option number]` or close the voto by using `/closo`)");
   }
 
   private handleVoto(msg: Message, split: string[]) {
@@ -97,7 +97,7 @@ export class BogoVote extends Hook {
     msg.channel.send(`${msg.author.username} has cast their vote for '${option.content}'`);
   }
 
-  private handleCloseo(msg: Message, split: string[]) {
+  private handleCloso(msg: Message, split: string[]) {
     const issue = this.issues[this.issues.length - 1];
     const optionsVotedFor = issue.votes
       .map((vote) => issue.options.find((opt) => opt.id === vote.optionId))
