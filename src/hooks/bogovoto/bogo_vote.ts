@@ -7,6 +7,7 @@ import { voto } from './commands/voto';
 import { IUser } from '../../utils/User';
 import { StateSave } from '../../utils/state';
 import { closo } from './commands/closo';
+import { listIssues } from './commands/list';
 
 /**
  * SUPER IMPORTANT:
@@ -16,6 +17,7 @@ const commands: SMap<handlerFunction> = {
 	bogovoto,
 	voto,
 	closo,
+	bogolist: listIssues,
 };
 
 //#region helper stuff
@@ -81,7 +83,7 @@ export class BogoVote extends Hook {
 			const handler = commands[command.substr(1)];
 
 			if (handler) {
-				handler(this, msg, split.slice(1)).then();
+				handler(this, msg, split.slice(1)).then().catch();
 			}
 		});
 	}
@@ -119,6 +121,12 @@ export class BogoVote extends Hook {
 
 		const existing = issues.find(u => u.id === issueId);
 		return existing || null;
+	}
+
+	public GetOpenIssueIds() {
+		const { issues } = this.state.Get();
+		return issues.filter(i => i.state === IssueState.OPEN)
+			.map(i => i.id);
 	}
 
 	/**
