@@ -1,5 +1,5 @@
-import { BogoVote } from "./hooks/bogo_vote";
-import { SampleHook } from "./hooks/sample_hook";
+import { BogoVote } from './hooks/bogovoto/bogo_vote';
+import { SampleHook } from './hooks/sample_hook';
 
 export const enabledHooks = [
 	SampleHook,
