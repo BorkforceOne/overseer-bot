@@ -13,7 +13,8 @@ export async function voto(bogo: BogoVote, msg: Message, args: string[]) {
 	// arg 1 is vote number
 
 	if (args.length !== 2) {
-		msg.reply('The usage is `/voto [issueId] [optionId]`');
+		msg.reply('The usage is `/voto issueId optionId`');
+		return;
 	}
 
 	const issueId = toIntOrNull(args[0]);

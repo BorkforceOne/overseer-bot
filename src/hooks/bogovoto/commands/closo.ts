@@ -10,13 +10,14 @@ import { toIntOrNull } from "../../../utils/generalUtils";
  */
 export async function closo(bogo: BogoVote, msg: Message, args: string[]) {
 	if (args.length !== 1) {
-		msg.reply('The usage is `/closo [issueId]`');
+		msg.reply('The usage is `/closo issueId`');
+		return;
 	}
 
 	const issueId = toIntOrNull(args[0]);
 
 	if (issueId === null) {
-		msg.reply('I don\'t know what that is');
+		msg.reply('I don\'t know what that is!');
 		return;
 	}
 
