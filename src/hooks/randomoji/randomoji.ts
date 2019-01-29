@@ -210,10 +210,10 @@ export class Randomoji extends Hook {
 			const chance = 1 / 74;
 			if (Math.random() < chance) {
 				const randomIndex = Math.floor(Math.random() * list.length);
-				const emoji = list[randomIndex];
+        const emoji = list[randomIndex];
 				
 				if (emoji && message.author.bot === false) {
-					message.channel.send(emoji);
+          message.react(emoji);
 				}
 			}
 
