@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.18.0",
     "discord.js": "^11.4.2",
     "tslint-eslint-rules": "^5.4.0",
     "tslint-loader": "^3.5.4",
