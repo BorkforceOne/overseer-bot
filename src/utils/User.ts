@@ -1,5 +1,5 @@
 
 export interface IUser {
-	guid: string;
-	name: string;
+  guid: string;
+  name: string;
 }

@@ -1,6 +1,7 @@
-import { Client } from "discord.js";
-import { enabledHooks } from "./enabledHooks";
-import { Hook } from "./hook";
+import { Client } from 'discord.js';
+
+import { ENABLED_HOOKS } from './enabled-hooks';
+import { Hook } from './hook';
 
 /**
  * Handles collecting and initializing all the hooks.
@@ -18,7 +19,7 @@ export class Hooks {
     const { client } = this;
 
     // Register
-    for (const HookClass of enabledHooks) {
+    for (const HookClass of ENABLED_HOOKS) {
       this.registeredHooks.push(new HookClass(client));
     }
 

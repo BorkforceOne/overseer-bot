@@ -1,4 +1,4 @@
-import { Hook } from "../hook";
+import { Hook } from '../hook';
 
 export class SampleHook extends Hook {
   public init() {

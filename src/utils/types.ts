@@ -1,3 +1,3 @@
 export interface SMap<T> {
-	[p: string]: T;
+  [p: string]: T;
 }

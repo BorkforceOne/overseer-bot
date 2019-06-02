@@ -1,128 +1,13 @@
 {
-	"rulesDirectory": [
-	  "node_modules/tslint-eslint-rules/dist/rules",
-	  "node_modules/tslint-microsoft-contrib",
-	  "node_modules/vrsource-tslint-rules/rules"
+	"defaultSeverity": "error",
+	"extends": [
+		"tslint:recommended"
 	],
+	"jsRules": {},
 	"rules": {
-	  "prefer-const": false,
-	  "object-literal-shorthand": true,
-	  "object-shorthand-properties-first": false,
-	  "object-literal-key-quotes": [
-		true,
-		"as-needed"
-	  ],
-	  "prefer-array-literal": true,
-	  "quotemark": [
-		false,
-		"single",
-		"jsx-double"
-	  ],
-	  "space-before-function-paren": [
-		true,
-		{
-		  "anonymous": "always",
-		  "named": "never"
-		}
-	  ],
-	  "no-param-reassign": true,
-	  "align": [
-		true,
-		"arguments",
-		"parameters"
-	  ],
-	  "ter-prefer-arrow-callback": [
-		true
-	  ],
-	  "arrow-parens": false,
-	  "ter-arrow-parens": [
-		false,
-		"as-needed",
-		{
-		  "requireForBlockBody": true
-		}
-	  ],
-	  "no-duplicate-imports": true,
-	  "triple-equals": [
-		true,
-		"allow-null-check"
-	  ],
-	  "brace-style": [
-		true,
-		"stroustrup",
-		{
-		  "allowSingleLine": true
-		}
-	  ],
-	  "comment-format": [
-		true,
-		"check-space"
-	  ],
-	  "ter-indent": [
-		true,
-		"tab",
-		{
-		  "SwitchCase": 1
-		}
-	  ],
-	  "indent": [
-		true,
-		"tabs"
-	  ],
-	  "whitespace": [
-		true,
-		"check-branch",
-		"check-decl",
-		"check-operator",
-		"check-preblock"
-	  ],
-	  "array-bracket-spacing": [
-		true,
-		"never"
-	  ],
-	  "object-curly-spacing": [
-		true,
-		"always"
-	  ],
-	  "trailing-comma": [
-		true,
-		{
-		  "multiline": {
-			"arrays": "always",
-			"objects": "always",
-			"functions": "never",
-			"imports": "always",
-			"exports": "always",
-			"typeLiterals": "always"
-		  },
-		  "singleline": "never"
-		}
-	  ],
-	  "semicolon": [
-		true,
-		"always",
-		"ignore-bound-class-methods"
-	  ],
-	  "radix": true,
-	  "no-construct": true,
-	  "variable-name": [
-		true,
-		"check-format",
-		"allow-leading-underscore",
-		"allow-pascal-case"
-	  ],
-	  "no-var-self": true,
-	  "no-increment-decrement": false,
-	  "no-tabs": false,
-	  "max-line-length": [
-		true,
-		150
-	  ],
-	  "jsx-alignment": true,
-	  "jsx-no-bind": true,
-	  "jsx-no-lambda": true,
-	  "jsx-self-close": true,
-	  "jsx-wrap-multiline": true
-	}
-  }
-  
+		"no-console": [
+			false
+		]
+	},
+	"rulesDirectory": []
+}

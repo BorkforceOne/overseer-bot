@@ -1,4 +1,4 @@
-import { Hook } from "../../hook";
+import { Hook } from '../../hook';
 
 const lmgtfyTemplate = "https://lmgtfy.com/?q=";
 const hotword = '@google';
@@ -19,7 +19,7 @@ export class FoogleHook extends Hook {
         if (toEncode.length === 0)
           return;
         const encodedURI = encodeURIComponent(toEncode);
-        const response = responses[Math.floor(Math.random()*responses.length)];
+        const response = responses[Math.floor(Math.random() * responses.length)];
         msg.reply({
           embed: {
             description: `[${response}](${lmgtfyTemplate}${encodedURI})`,

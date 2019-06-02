@@ -1,5 +1,6 @@
-import { Client } from "discord.js";
-import { Hooks } from "./hooks";
+import { Client } from 'discord.js';
+
+import { Hooks } from './hooks';
 
 const client = new Client();
 const hooks = new Hooks(client);
