@@ -4,6 +4,7 @@ import { FoogleHook } from './hooks/foogle/foogle';
 import { RandomojiHook } from './hooks/randomoji/randomoji';
 import { SampleHook } from './hooks/sample-hook';
 import { WhatHook } from './hooks/what/what';
+import { SnapchatHook } from './hooks/snapchat/snapchat';
 
 export const ENABLED_HOOKS = [
   SampleHook,
@@ -12,4 +13,5 @@ export const ENABLED_HOOKS = [
   RandomojiHook,
   AcromeanHook,
   WhatHook,
+  SnapchatHook,
 ];
