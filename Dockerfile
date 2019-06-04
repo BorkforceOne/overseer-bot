@@ -1,5 +1,5 @@
 # specify the node base image with your desired version node:<version>
-FROM node:8-alpine
+FROM node:10-alpine
 
 # Create app directory
 WORKDIR /usr/app
