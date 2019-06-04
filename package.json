@@ -13,16 +13,12 @@
   "dependencies": {
     "axios": "^0.18.0",
     "discord.js": "^11.4.2",
-    "tslint-eslint-rules": "^5.4.0",
-    "tslint-loader": "^3.5.4",
-    "tslint-microsoft-contrib": "^6.0.0",
-    "vrsource-tslint-rules": "^6.0.0"
+    "typescript": "^3.2.2"
   },
   "devDependencies": {
     "@types/node": "^10.12.12",
     "dotenv": "^6.2.0",
     "ts-node": "^7.0.1",
-    "tslint": "^5.11.0",
-    "typescript": "^3.2.2"
+    "tslint": "^5.11.0"
   }
 }
