@@ -1,16 +1,15 @@
 import { Hook } from '../../hook';
-import { GroupDMChannel } from 'discord.js';
+import { TextChannel } from 'discord.js';
 
 export class SnapchatHook extends Hook {
   public init() {
     const { client } = this;
 
     client.on('message', (msg) => {
-      if (msg.channel.type !== 'group')
+      if (msg.channel.type !== 'text')
         return;
 
-      // fucking discord types are wrong
-      const channel = msg.channel as GroupDMChannel;
+      const channel = msg.channel as TextChannel;
 
       // only delete messages in announcements
       if (channel.name !== 'announcements')
@@ -18,10 +17,10 @@ export class SnapchatHook extends Hook {
 
       // do not delete announcements, only discussions
       if (msg.content.toLowerCase().includes('!announcement'))
-      return;
+        return;
 
       // delete after five minutes
-      msg.delete(5 * 60);
+      msg.delete(1000 * 60 * 5);
     });
   }
 }
