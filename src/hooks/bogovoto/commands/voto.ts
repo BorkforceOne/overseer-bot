@@ -1,7 +1,7 @@
 import { Message } from 'discord.js';
 
 import { toIntOrNull } from '../../../utils/general';
-import { BogoVote, VoteCode } from '../bogo_vote';
+import { BogoVotoHook, VoteCode } from '../bogovoto';
 
 /**
  * Cast a vote
@@ -9,7 +9,7 @@ import { BogoVote, VoteCode } from '../bogo_vote';
  * @param msg 
  * @param args 
  */
-export async function voto(bogo: BogoVote, msg: Message, args: string[]) {
+export async function voto(bogo: BogoVotoHook, msg: Message, args: string[]) {
   // arg 0 is issue number
   // arg 1 is vote number
 

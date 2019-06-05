@@ -1,7 +1,7 @@
 import { Message } from 'discord.js';
 
 import { toIntOrNull } from '../../../utils/general';
-import { BogoVote, CloseCode } from '../bogo_vote';
+import { BogoVotoHook, CloseCode } from '../bogovoto';
 
 /**
  * Closes a vote and announces the winner!
@@ -9,7 +9,7 @@ import { BogoVote, CloseCode } from '../bogo_vote';
  * @param msg
  * @param args 
  */
-export async function closo(bogo: BogoVote, msg: Message, args: string[]) {
+export async function closo(bogo: BogoVotoHook, msg: Message, args: string[]) {
   if (args.length !== 1) {
     msg.reply('The usage is `/closo issueId`');
     return;

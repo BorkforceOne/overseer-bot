@@ -1,6 +1,6 @@
 import { Message } from 'discord.js';
 
-import { BogoVote } from '../bogo_vote';
+import { BogoVotoHook } from '../bogovoto';
 import { IOption } from '../types';
 
 /**
@@ -9,7 +9,7 @@ import { IOption } from '../types';
  * @param msg 
  * @param args 
  */
-export async function bogovoto(bogovote: BogoVote, msg: Message, args: string[]) {
+export async function bogovoto(bogovote: BogoVotoHook, msg: Message, args: string[]) {
   // Create the options
   const options: IOption[] = args.map((option, i) => ({
     content: option,

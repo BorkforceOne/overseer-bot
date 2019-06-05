@@ -1,8 +1,15 @@
-import { Hook } from '../../hook';
-import { TextChannel } from 'discord.js';
+import { Hook } from '../../utils/hook';
+import { TextChannel, Client } from 'discord.js';
+import { DiscordService } from '../../services/discord_service';
 
-export class SnapchatHook extends Hook {
-  public init() {
+export class SnapchatHook implements Hook {
+  private readonly client: Client;
+
+  constructor(private readonly discordService: DiscordService) {
+    this.client = this.discordService.getClient();
+  }
+
+  async init() {
     const { client } = this;
 
     client.on('message', (msg) => {

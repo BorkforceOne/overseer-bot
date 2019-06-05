@@ -1,6 +1,6 @@
 import { Client, Message } from 'discord.js';
 
-import { Hook } from '../../hook';
+import { Hook } from '../../utils/hook';
 import { StateSave } from '../../utils/state';
 import { SMap } from '../../utils/types';
 import { IUser } from '../../utils/User';
@@ -9,6 +9,7 @@ import { closo } from './commands/closo';
 import { listIssues } from './commands/list';
 import { voto } from './commands/voto';
 import { IIssue, IOption, IssueState, IVote } from './types';
+import { DiscordService } from '../../services/discord_service';
 
 /**
  * SUPER IMPORTANT:
@@ -23,7 +24,7 @@ const commands: SMap<handlerFunction> = {
 
 //#region helper stuff
 
-type handlerFunction = (bogovote: BogoVote, msg: Message, args: string[]) => Promise<void>;
+type handlerFunction = (bogovote: BogoVotoHook, msg: Message, args: string[]) => Promise<void>;
 
 export enum VoteCode {
   UNREGISTERED_USER,
@@ -51,21 +52,21 @@ interface IState {
 /**
  * Runs a voting application
  */
-export class BogoVote extends Hook {
+export class BogoVotoHook implements Hook {
   private users: IUser[] = [];
 
-  private state: StateSave<IState>;
+  private state = new StateSave<IState>({
+    issues: [],
+    nextIssueId: 0,
+  });
 
-  constructor(client: Client) {
-    super(client);
+  private readonly client: Client;
 
-    this.state = new StateSave<IState>({
-      issues: [],
-      nextIssueId: 0,
-    });
+  constructor(private readonly discordService: DiscordService) {
+    this.client = this.discordService.getClient();
   }
 
-  public init() {
+  async init() {
     const { client } = this;
 
     client.on('message', (msg) => {

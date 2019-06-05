@@ -1,6 +1,7 @@
 import { Client } from 'discord.js';
 
-import { Hook } from '../../hook';
+import { Hook } from '../../utils/hook';
+import { DiscordService } from '../../services/discord_service';
 
 const list = [
   '⌚',
@@ -200,13 +201,14 @@ const list = [
   '🤼',
 ];
 
-export class RandomojiHook extends Hook {
+export class RandomojiHook implements Hook {
+  private readonly client: Client;
 
-  constructor(client: Client) {
-    super(client);
+  constructor(private readonly discordService: DiscordService) {
+    this.client = this.discordService.getClient();
   }
 
-  public init() {
+  async init() {
     this.client.on('message', (message) => {
       const chance = 1 / 74;
       if (Math.random() < chance) {

@@ -1,12 +1,12 @@
 
-export class StateSave<StateShape> {
-  private internalState: StateShape;
+export class StateSave<TStateShape> {
+  private internalState: TStateShape;
 
-  constructor(initial: StateShape) {
+  constructor(initial: TStateShape) {
     this.internalState = initial;
   }
 
-  public Save(obj: Partial<StateShape>) {
+  public Save(obj: Partial<TStateShape>) {
     this.internalState = {
       ... this.internalState,
       ...obj,

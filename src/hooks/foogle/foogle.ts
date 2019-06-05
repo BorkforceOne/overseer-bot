@@ -1,4 +1,6 @@
-import { Hook } from '../../hook';
+import { Hook } from '../../utils/hook';
+import { DiscordService } from '../../services/discord_service';
+import { Client } from 'discord.js';
 
 const lmgtfyTemplate = "https://lmgtfy.com/?q=";
 const hotword = '@google';
@@ -9,8 +11,14 @@ const responses = [
 
 /** Fake Google that just LMGTFYs whatever you look up */
 /** This hook is not associated with Google in any way */
-export class FoogleHook extends Hook {
-  public init() {
+export class FoogleHook implements Hook {
+  private readonly client: Client;
+
+  constructor(private readonly discordService: DiscordService) {
+    this.client = this.discordService.getClient();
+  }
+
+  async init() {
     const { client } = this;
 
     client.on("message", (msg) => {

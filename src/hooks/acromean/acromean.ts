@@ -1,7 +1,8 @@
 import axios from 'axios';
-import { Message } from 'discord.js';
+import { Message, Client } from 'discord.js';
 
-import { Hook } from '../../hook';
+import { Hook } from '../../utils/hook';
+import { DiscordService } from '../../services/discord_service';
 
 const API = "https://api.datamuse.com/words";
 const MAX_RESULTS = 1000;
@@ -12,8 +13,14 @@ const BLACKLISTED_WORDS = [
   'WHAT'
 ];
 
-export class AcromeanHook extends Hook {
-  public init() {
+export class AcromeanHook implements Hook {
+  private readonly client: Client;
+
+  constructor(private readonly discordService: DiscordService) {
+    this.client = this.discordService.getClient();
+  }
+
+  async init() {
     const { client } = this;
 
     client.on("message", (msg) => {

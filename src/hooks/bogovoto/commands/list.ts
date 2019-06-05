@@ -1,14 +1,14 @@
 import { Message } from 'discord.js';
 
 import { toIntOrNull } from '../../../utils/general';
-import { BogoVote } from '../bogo_vote';
+import { BogoVotoHook } from '../bogovoto';
 import { IssueState } from '../types';
 
-function formatIssue(bogo: BogoVote, i: number): string {
+function formatIssue(bogo: BogoVotoHook, i: number): string {
   return `Bogo #${i}: \n` + bogo.GetIssue(i)!.options.map(op => `\t${op.id}: ${op.content}`).join('\n');
 }
 
-export async function listIssues(bogo: BogoVote, msg: Message, args: string[]) {
+export async function listIssues(bogo: BogoVotoHook, msg: Message, args: string[]) {
   if (args.length >= 1) {
     const issueId = toIntOrNull(args[0]);
 

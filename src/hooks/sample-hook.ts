@@ -1,7 +1,15 @@
-import { Hook } from '../hook';
+import { Hook } from '../utils/hook';
+import { Client } from 'discord.js';
+import { DiscordService } from '../services/discord_service';
 
-export class SampleHook extends Hook {
-  public init() {
+export class SampleHook implements Hook {
+  private readonly client: Client;
+
+  constructor(private readonly discordService: DiscordService) {
+    this.client = this.discordService.getClient();
+  }
+
+  async init() {
     const { client } = this;
 
     client.on("ready", () => {
