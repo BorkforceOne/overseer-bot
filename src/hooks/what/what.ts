@@ -19,7 +19,7 @@ export class WhatHook implements Hook {
         if (msg.content !== 'WHAT') {
           CACHE[msg.channel.id] = msg.content;
         } else if (CACHE[msg.channel.id]) {
-          msg.reply(`they said "${CACHE[msg.channel.id].toUpperCase()}"`);
+          msg.reply(`${CACHE[msg.channel.id].toUpperCase()}`);
         }
       }
     });
