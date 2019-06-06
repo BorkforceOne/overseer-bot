@@ -1,4 +1,3 @@
-ARG BRANCH="master"
 ARG COMMIT=""
 
 # Specify the node base image
@@ -20,6 +19,5 @@ COPY ./src .
 RUN npm run build
 
 ENV COMMIT_SHA=${COMMIT}
-ENV COMMIT_BRANCH=${BRANCH}
 
 CMD [ "npm", "start" ]
