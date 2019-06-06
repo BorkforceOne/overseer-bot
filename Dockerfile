@@ -1,4 +1,7 @@
-# specify the node base image with your desired version node:<version>
+ARG BRANCH="master"
+ARG COMMIT=""
+
+# Specify the node base image
 FROM node:10-alpine
 
 # Create app directory
@@ -15,5 +18,8 @@ COPY ./src .
 
 # Build Boi
 RUN npm run build
+
+ENV COMMIT_SHA=${COMMIT}
+ENV COMMIT_BRANCH=${BRANCH}
 
 CMD [ "npm", "start" ]

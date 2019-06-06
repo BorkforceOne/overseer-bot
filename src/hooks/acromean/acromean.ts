@@ -24,14 +24,16 @@ export class AcromeanHook implements Hook {
     const { client } = this;
 
     client.on("message", (msg) => {
-      if (msg.member.user.bot === false) {
-        let timesRan = 0;
-        const splits = msg.content.split(' ');
-        for (const split of splits) {
-          if (split.length > 1 && split.match(ACRO_REGEX) && BLACKLISTED_WORDS.indexOf(split) === -1) {
-            if (timesRan < MAX_RESULTS_PER_MSG) {
-              this.reply(split, msg);
-              timesRan++;
+      if (msg.channel.type === 'text') {
+        if (msg.member.user.bot === false) {
+          let timesRan = 0;
+          const splits = msg.content.split(' ');
+          for (const split of splits) {
+            if (split.length > 1 && split.match(ACRO_REGEX) && BLACKLISTED_WORDS.indexOf(split) === -1) {
+              if (timesRan < MAX_RESULTS_PER_MSG) {
+                this.reply(split, msg);
+                timesRan++;
+              }
             }
           }
         }

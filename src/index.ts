@@ -8,6 +8,7 @@ import { DiscordService } from './services/discord_service';
 import { HooksService } from './services/hooks_service';
 import { ServiceRegistrySingleton } from './utils/service_registry';
 import { SampleHook } from './hooks/sample-hook';
+import { VersionHook } from './hooks/version/version';
 
 const ENABLED_HOOKS = [
   'acromeanHook',
@@ -17,6 +18,7 @@ const ENABLED_HOOKS = [
   'snapchatHook',
   'whatHook',
   'sampleHook',
+  'versionHook',
 ];
 
 class Main {
@@ -44,6 +46,7 @@ function registerServices() {
   ServiceRegistrySingleton.addService('snapchatHook', SnapchatHook);
   ServiceRegistrySingleton.addService('whatHook', WhatHook);
   ServiceRegistrySingleton.addService('sampleHook', SampleHook);
+  ServiceRegistrySingleton.addService('versionHook', VersionHook);
 }
 
 registerServices();
