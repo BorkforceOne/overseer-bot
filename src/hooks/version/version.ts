@@ -2,7 +2,6 @@ import { Client } from 'discord.js';
 
 import { DiscordService } from '../../services/discord_service';
 import { Hook } from '../../utils/hook';
-const npmPackage = require('../../../package.json');
 
 export class VersionHook implements Hook {
   private readonly client: Client;
@@ -15,12 +14,12 @@ export class VersionHook implements Hook {
     const { client } = this;
 
     client.on("ready", () => {
-      console.log(`Running version (${npmPackage.version} - ${process.env.COMMIT_SHA})`);
+      console.log(`Running version (${process.env.npm_package_version} - ${process.env.SOURCE_COMMIT})`);
     });
 
     client.on("message", (msg) => {
       if (msg.content === "/version") {
-        msg.reply(`I'm running version (${npmPackage.version} - ${process.env.COMMIT_SHA})`);
+        msg.reply(`I'm running version (${process.env.npm_package_version} - ${process.env.SOURCE_COMMIT})`);
       }
     });
   }

@@ -1,5 +1,3 @@
-ARG COMMIT=""
-
 # Specify the node base image
 FROM node:10-alpine
 
@@ -18,6 +16,7 @@ COPY ./src .
 # Build Boi
 RUN npm run build
 
-ENV COMMIT_SHA=${COMMIT}
+ARG SOURCE_COMMIT
+ENV SOURCE_COMMIT=$SOURCE_COMMIT
 
 CMD [ "npm", "start" ]
