@@ -9,6 +9,7 @@ import { HooksService } from './services/hooks_service';
 import { ServiceRegistrySingleton } from './utils/service_registry';
 import { SampleHook } from './hooks/sample-hook';
 import { VersionHook } from './hooks/version/version';
+import { InnovateHook } from './hooks/innovate/innovate';
 
 const ENABLED_HOOKS = [
   'acromeanHook',
@@ -19,6 +20,7 @@ const ENABLED_HOOKS = [
   'whatHook',
   'sampleHook',
   'versionHook',
+  'innovateHook',
 ];
 
 class Main {
@@ -47,6 +49,7 @@ function registerServices() {
   ServiceRegistrySingleton.addService('whatHook', WhatHook);
   ServiceRegistrySingleton.addService('sampleHook', SampleHook);
   ServiceRegistrySingleton.addService('versionHook', VersionHook);
+  ServiceRegistrySingleton.addService('innovateHook', InnovateHook);
 }
 
 registerServices();
