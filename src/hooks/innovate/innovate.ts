@@ -33,9 +33,9 @@ export class InnovateHook implements Hook {
   public matchGarbage(_msg: string): boolean {
     const msg = _msg.toLowerCase();
     const patterns: RegExp[] = [
-      /\Wu\s*of\s*a\W/g,
-      /\Wu\s*\s*a\W/g,
-      /\Wuniversity\s*\s*arizona\W/g,
+      /(\W|^)u\s*of\s*a(?!\w)/g,
+      /(\W|^)u\s*a(?!\w)/g,
+      /(\W|^)university\s*\s*arizona(?!\w)/g,
     ];
     return patterns.some(r => r.test(msg));
   }
@@ -43,8 +43,8 @@ export class InnovateHook implements Hook {
   public matchAsu(_msg: string): boolean {
     const msg = _msg.toLowerCase();
     const patterns: RegExp[] = [
-      /\Wa\s*s\s*u\W/g,
-      /\Warizona\s*state\W/g,
+      /(\W|^)a\s*s\s*u(?!\w)/g,
+      /(\W|^)arizona\s*state(?!\w)/g,
     ];
     return patterns.some(r => r.test(msg));
   }
