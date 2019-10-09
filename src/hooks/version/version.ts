@@ -24,7 +24,6 @@ export class VersionHook implements Hook {
       if (!version)
         throw new Error('No version number found!');
       const url = baseUrl + (commitHash ? 'commit/' + commitHash : '');
-      console.log(url);
       if (msg.content === "/version") {
         const resp = new RichEmbed()
           .setAuthor(
