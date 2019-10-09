@@ -18,13 +18,14 @@ export class VersionHook implements Hook {
     });
 
     client.on("message", (msg) => {
-      const baseUrl = 'https://github.com/bjg96/overseer-bot/'; // TODO use a process env?
-      const commitHash = process.env.SOURCE_COMMIT;
-      const version = process.env.npm_package_version;
-      if (!version)
-        throw new Error('No version number found!');
-      const url = baseUrl + (commitHash ? 'commit/' + commitHash : '');
       if (msg.content === "/version") {
+        const baseUrl = 'https://github.com/bjg96/overseer-bot/'; // TODO use a process env?
+        const commitHash = process.env.SOURCE_COMMIT;
+        const version = process.env.npm_package_version;
+        if (!version)
+          throw new Error('No version number found!');
+        const url = baseUrl + (commitHash ? 'commit/' + commitHash : '');
+
         const resp = new RichEmbed()
           .setAuthor(
             client.user.username,
