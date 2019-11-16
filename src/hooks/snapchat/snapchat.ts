@@ -1,6 +1,6 @@
 import { Hook } from '../../utils/hook';
 import { TextChannel, Client } from 'discord.js';
-import { DiscordService } from '../../services/discord_service';
+import { DiscordService } from '../../services/app/discord_service';
 
 export class SnapchatHook implements Hook {
   private readonly client: Client;

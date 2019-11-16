@@ -1,7 +1,7 @@
 import { Client } from 'discord.js';
 
 import { Hook } from '../../utils/hook';
-import { DiscordService } from '../../services/discord_service';
+import { DiscordService } from '../../services/app/discord_service';
 
 const list = [
   '⌚',

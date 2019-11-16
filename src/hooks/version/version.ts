@@ -1,6 +1,6 @@
 import { Client, RichEmbed } from 'discord.js';
 
-import { DiscordService } from '../../services/discord_service';
+import { DiscordService } from '../../services/app/discord_service';
 import { Hook } from '../../utils/hook';
 
 export class VersionHook implements Hook {
