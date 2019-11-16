@@ -4,15 +4,12 @@ import { FoogleHook } from './hooks/foogle/foogle';
 import { RandomojiHook } from './hooks/randomoji/randomoji';
 import { SnapchatHook } from './hooks/snapchat/snapchat';
 import { WhatHook } from './hooks/what/what';
-import { DiscordService } from './services/app/discord_service';
-import { HooksService } from './services/app/hooks_service';
+import { DiscordService } from './services/discord_service';
+import { HooksService } from './services/hooks_service';
 import { ServiceRegistrySingleton } from './utils/service_registry';
 import { SampleHook } from './hooks/sample-hook';
 import { VersionHook } from './hooks/version/version';
 import { InnovateHook } from './hooks/innovate/innovate';
-import { DateService } from './services/core/date.service';
-import { CountThrottleStrategyService } from './services/throttle/countThrottleStrategy.service';
-import { TimeThrottleStrategyService } from './services/throttle/timeThrottleStrategy.service';
 
 const ENABLED_HOOKS = [
   'acromeanHook',
@@ -43,9 +40,6 @@ function registerServices() {
   ServiceRegistrySingleton.addService('main', Main);
   ServiceRegistrySingleton.addService('discordService', DiscordService);
   ServiceRegistrySingleton.addService('hooksService', HooksService);
-  ServiceRegistrySingleton.addService('dateService', DateService);
-  ServiceRegistrySingleton.addService('countThrottleStrategyService', CountThrottleStrategyService);
-  ServiceRegistrySingleton.addService('timeThrottleStrategyService', TimeThrottleStrategyService);
 
   ServiceRegistrySingleton.addService('acromeanHook', AcromeanHook);
   ServiceRegistrySingleton.addService('bogovotoHook', BogoVotoHook);
