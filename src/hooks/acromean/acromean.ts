@@ -3,6 +3,9 @@ import { Message, Client } from 'discord.js';
 
 import { Hook } from '../../utils/hook';
 import { DiscordService } from '../../services/app/discord_service';
+import { CountThrottleStrategyService } from '../../services/throttle/countThrottleStrategy.service';
+import { TimeThrottleStrategyService } from '../../services/throttle/timeThrottleStrategy.service';
+import { throttle } from '../../services/throttle/throttle';
 
 const API = "https://api.datamuse.com/words";
 const MAX_RESULTS = 1000;
@@ -12,16 +15,30 @@ const MAX_RESULTS_PER_MSG = 1;
 const BLACKLISTED_WORDS = [
   'WHAT'
 ];
+const NUM_MESSAGES_BEFORE_FIRING_AGAIN = 10;
+const DURATION_BEFORE_FIRING_AGAIN_MS = 30 * 60 * 1000;
 
 export class AcromeanHook implements Hook {
   private readonly client: Client;
 
-  constructor(private readonly discordService: DiscordService) {
+  constructor(
+    private readonly discordService: DiscordService,
+    private readonly countStrategy: CountThrottleStrategyService,
+    private readonly timeStrategy: TimeThrottleStrategyService,
+  ) {
     this.client = this.discordService.getClient();
   }
 
   async init() {
     const { client } = this;
+
+    const throttledReply = throttle({
+      fire: this.reply,
+      throttleStrategies: [
+        this.countStrategy.getStrategy({ numCallsBeforeFiringAgain: NUM_MESSAGES_BEFORE_FIRING_AGAIN }),
+        this.timeStrategy.getStrategy({ durationBeforeFiringAgainMs: DURATION_BEFORE_FIRING_AGAIN_MS }),
+      ],
+    });
 
     client.on("message", (msg) => {
       if (msg.channel.type === 'text') {
@@ -31,7 +48,7 @@ export class AcromeanHook implements Hook {
           for (const split of splits) {
             if (split.length > 1 && split.match(ACRO_REGEX) && BLACKLISTED_WORDS.indexOf(split) === -1) {
               if (timesRan < MAX_RESULTS_PER_MSG) {
-                this.reply(split, msg);
+                throttledReply(split, msg);
                 timesRan++;
               }
             }
