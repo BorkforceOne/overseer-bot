@@ -1,5 +1,5 @@
-import { ServiceRegistrySingleton } from "../utils/service_registry";
-import { Hook } from "../utils/hook";
+import { Hook } from "../../utils/hook";
+import { ServiceRegistrySingleton } from "../../utils/service_registry";
 
 export class HooksService {
   private registeredHooks: Hook[] = [];

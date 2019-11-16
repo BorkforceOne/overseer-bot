@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Message, Client } from 'discord.js';
 
 import { Hook } from '../../utils/hook';
-import { DiscordService } from '../../services/discord_service';
+import { DiscordService } from '../../services/app/discord_service';
 
 const API = "https://api.datamuse.com/words";
 const MAX_RESULTS = 1000;
