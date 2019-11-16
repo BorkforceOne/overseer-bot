@@ -9,7 +9,7 @@ import { closo } from './commands/closo';
 import { listIssues } from './commands/list';
 import { voto } from './commands/voto';
 import { IIssue, IOption, IssueState, IVote } from './types';
-import { DiscordService } from '../../services/discord_service';
+import { DiscordService } from '../../services/app/discord_service';
 
 /**
  * SUPER IMPORTANT:
