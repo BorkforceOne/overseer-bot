@@ -1,5 +1,5 @@
 import { Hook } from '../../utils/hook';
-import { DiscordService } from '../../services/app/discord_service';
+import { DiscordService } from '../../services/discord_service';
 import { Client } from 'discord.js';
 
 const CACHE: any = {};

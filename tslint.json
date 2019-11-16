@@ -9,22 +9,6 @@
 			false
 		],
 		"arrow-parens": false,
-		"max-classes-per-file": false,
-		"variable-name": {
-			"options": [
-				"check-format",
-				"allow-leading-underscore",
-				"allow-pascal-case"
-			]
-		},
-		"no-shadowed-variable": false,
-		"trailing-comma": false,
-		"no-trailing-whitespace": false,
-		"interface-name": false,
-		"member-ordering": false,
-		"eofline": false,
-		"no-empty": false,
-		"object-literal-sort-keys": false
 	},
 	"rulesDirectory": []
 }
