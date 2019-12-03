@@ -13,6 +13,7 @@ import { InnovateHook } from './hooks/innovate/innovate';
 import { DateService } from './services/core/date.service';
 import { CountThrottleStrategyService } from './services/throttle/countThrottleStrategy.service';
 import { TimeThrottleStrategyService } from './services/throttle/timeThrottleStrategy.service';
+import { ReplybotHook } from './hooks/replybot/replybot';
 
 const ENABLED_HOOKS = [
   'acromeanHook',
@@ -24,6 +25,7 @@ const ENABLED_HOOKS = [
   'sampleHook',
   'versionHook',
   'innovateHook',
+  'replybotHook'
 ];
 
 class Main {
@@ -56,6 +58,7 @@ function registerServices() {
   ServiceRegistrySingleton.addService('sampleHook', SampleHook);
   ServiceRegistrySingleton.addService('versionHook', VersionHook);
   ServiceRegistrySingleton.addService('innovateHook', InnovateHook);
+  ServiceRegistrySingleton.addService('replybotHook', ReplybotHook);
 }
 
 registerServices();
