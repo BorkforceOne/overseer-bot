@@ -11,7 +11,7 @@ COPY *.json ./
 RUN npm ci
 
 # Bundle app source
-COPY ./src .
+COPY ./src ./src
 
 # Build Boi
 RUN npm run build

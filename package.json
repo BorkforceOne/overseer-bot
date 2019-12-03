@@ -1,6 +1,6 @@
 {
   "name": "overseer-bot",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A discord bot for MAGIC Bois.",
   "main": "./dist/index.js",
   "scripts": {
