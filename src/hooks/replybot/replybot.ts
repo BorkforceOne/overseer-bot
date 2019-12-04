@@ -71,8 +71,11 @@ export class ReplybotHook implements Hook {
 						const randomIndex = Math.floor(Math.random() * item.responses.length);
 						const replyPattern = item.responses[randomIndex];
 						for (const m of matches) {
-							const reply = msg.content.replace(m, replyPattern);
-							possibleReplies.push(reply);
+							const execMatches = m.exec(msg.content);
+							if (execMatches) {
+								const reply = execMatches[0].replace(m, replyPattern);
+								possibleReplies.push(reply);
+							}
 						}
 					}
 				}
