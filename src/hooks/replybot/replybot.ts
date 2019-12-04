@@ -17,7 +17,7 @@ type Config = ConfigItem[];
 const conf: Config = rawconf.map(
 	c => ({
 		responses: c.responses,
-		triggers: c.triggers.map(r => new RegExp(r)),
+		triggers: c.triggers.map(r => new RegExp(r, 'i')),
 	})
 );
 
@@ -38,7 +38,7 @@ export class ReplybotHook implements Hook {
 		const { client } = this;
 
 		const strat = this.throttle.getStrategy({
-			durationBeforeFiringAgainMs: 10 * 60 * 1000,
+			durationBeforeFiringAgainMs: 60 * 1000,
 		});
 
 		const reply = throttle({
