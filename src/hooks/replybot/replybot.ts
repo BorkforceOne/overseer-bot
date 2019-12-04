@@ -38,7 +38,7 @@ export class ReplybotHook implements Hook {
 		const { client } = this;
 
 		const strat = this.throttle.getStrategy({
-			durationBeforeFiringAgainMs: 60 * 1000,
+			durationBeforeFiringAgainMs: 1000,
 		});
 
 		const reply = throttle({

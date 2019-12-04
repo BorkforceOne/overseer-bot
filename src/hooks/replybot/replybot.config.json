@@ -27,5 +27,92 @@
 		"responses": [
 			"https://i.imgur.com/sYtYg6N.gifv"
 		]
+	},
+	{
+		"triggers": [
+			"\\bbogovote:?\\s+([^,]+),\\s*([^,]+)"
+		],
+		"responses": [
+			"Bogovote: $1",
+			"Bogovote: $2",
+			"Bogovote: Arby's"
+		]
+	},
+	{
+		"triggers": [
+			"\\bbogovote:?\\s+([^,]+),\\s*([^,]+),\\s*([^,]+)"
+		],
+		"responses": [
+			"Bogovote: $1",
+			"Bogovote: $2",
+			"Bogovote: $3"
+		]
+	},
+	{
+		"triggers": [
+			"\\bbogovote:?\\s+([^,]+),\\s*([^,]+),\\s*([^,]+),\\s*([^,]+)"
+		],
+		"responses": [
+			"Bogovote: $1",
+			"Bogovote: $2",
+			"Bogovote: $3",
+			"Bogovote: $4"
+		]
+	},
+	{
+		"triggers": [
+			"\\bbogovote:?\\s+([^,]+),\\s*([^,]+),\\s*([^,]+),\\s*([^,]+),\\s*([^,]+)"
+		],
+		"responses": [
+			"Bogovote: $1",
+			"Bogovote: $2",
+			"Bogovote: $3",
+			"Bogovote: $4",
+			"Bogovote: $5"
+		]
+	},
+	{
+		"triggers": [
+			"\\bbogovote:?\\s+([^,]+),\\s*([^,]+),\\s*([^,]+),\\s*([^,]+),\\s*([^,]+),\\s*([^,]+)"
+		],
+		"responses": [
+			"Bogovote: $1",
+			"Bogovote: $2",
+			"Bogovote: $3",
+			"Bogovote: $4",
+			"Bogovote: $5",
+			"Bogovote: $6",
+			"Bogovote: Arby's"
+		]
+	},
+	{
+		"triggers": [
+			"\\bbogovote:?\\s+([^,]+),\\s*([^,]+),\\s*([^,]+),\\s*([^,]+),\\s*([^,]+),\\s*([^,]+),\\s*([^,]+)"
+		],
+		"responses": [
+			"Bogovote: $1",
+			"Bogovote: $2",
+			"Bogovote: $3",
+			"Bogovote: $4",
+			"Bogovote: $5",
+			"Bogovote: $6",
+			"Bogovote: $7"
+		]
+	},
+	{
+		"triggers": [
+			"\\bbogovote:?\\s+([^,]+),\\s*([^,]+),\\s*([^,]+),\\s*([^,]+),\\s*([^,]+),\\s*([^,]+),\\s*([^,]+),\\s*([^,]+)"
+		],
+		"responses": [
+			"Bogovote: $1",
+			"Bogovote: $2",
+			"Bogovote: $3",
+			"Bogovote: $4",
+			"Bogovote: $5",
+			"Bogovote: $6",
+			"Bogovote: $7",
+			"Bogovote: $8",
+			"Bogovote: Arby's"
+		]
 	}
 ]
