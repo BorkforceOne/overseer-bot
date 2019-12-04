@@ -17,7 +17,7 @@ type Config = ConfigItem[];
 const conf: Config = rawconf.map(
 	c => ({
 		responses: c.responses,
-		triggers: c.triggers.map(r => new RegExp(r)),
+		triggers: c.triggers.map(r => new RegExp(r, 'i')),
 	})
 );
 
