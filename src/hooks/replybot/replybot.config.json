@@ -18,7 +18,8 @@
 		],
 		"responses": [
 			"http://i.somethingawful.com/mjolnir/images/frolixo~happybadger.jpg"
-		]
+        ],
+        "throttleSeconds": 600
 	},
 	{
 		"triggers": [
@@ -26,7 +27,8 @@
 		],
 		"responses": [
 			"https://i.imgur.com/sYtYg6N.gifv"
-		]
+		],
+        "throttleSeconds": 600
 	},
 	{
 		"triggers": [
@@ -182,7 +184,8 @@
 			"Hi $2, I'm Dad.",
 			"Hi $2, I'm Overseer.",
 			"Hey $2, I'm Daddy Overseer."
-		]
+		],
+        "throttleSeconds": 600
 	},
 	{
 		"triggers": [
