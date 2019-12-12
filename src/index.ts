@@ -8,10 +8,13 @@ import { SampleHook } from "./hooks/sample-hook";
 import { SnapchatHook } from "./hooks/snapchat/snapchat";
 import { VersionHook } from "./hooks/version/version";
 import { WhatHook } from "./hooks/what/what";
+
+import { FuckOffHook } from "./hooks/fuckoff/fuckoff";
 import { DiscordService } from "./services/app/discord_service";
 import { HooksService } from "./services/app/hooks_service";
 import { DateService } from "./services/core/date.service";
 import { CountThrottleStrategyService } from "./services/throttle/countThrottleStrategy.service";
+import { FuckOffThrottleStrategyService } from "./services/throttle/fuckOffThrottleStrategy.service";
 import { TimeThrottleStrategyService } from "./services/throttle/timeThrottleStrategy.service";
 import { ServiceRegistrySingleton } from "./utils/service_registry";
 import { OrThrottleStrategyService } from "./services/throttle/orThrottleStrategy.service";
@@ -27,7 +30,8 @@ const ENABLED_HOOKS = [
     "sampleHook",
     "versionHook",
     "innovateHook",
-    "replybotHook"
+    "replybotHook",
+    "fuckOffHook",
 ];
 
 class Main {
@@ -52,6 +56,7 @@ function registerServices() {
     ServiceRegistrySingleton.addService("timeThrottleStrategyService", TimeThrottleStrategyService);
     ServiceRegistrySingleton.addService("andThrottleStrategyService", AndThrottleStrategyService);
     ServiceRegistrySingleton.addService("orThrottleStrategyService", OrThrottleStrategyService);
+    ServiceRegistrySingleton.addService("fuckOffThrottleStrategyService", FuckOffThrottleStrategyService);
 
     ServiceRegistrySingleton.addService("acromeanHook", AcromeanHook);
     ServiceRegistrySingleton.addService("bogovotoHook", BogoVotoHook);
@@ -63,6 +68,7 @@ function registerServices() {
     ServiceRegistrySingleton.addService("versionHook", VersionHook);
     ServiceRegistrySingleton.addService("innovateHook", InnovateHook);
     ServiceRegistrySingleton.addService("replybotHook", ReplybotHook);
+    ServiceRegistrySingleton.addService("fuckOffHook", FuckOffHook);
 }
 
 registerServices();
