@@ -21,7 +21,7 @@ export class TimeThrottleStrategyService implements ThrottleStrategyService<Time
     private readonly dateService: DateService,
   ) {}
   
-  public getStrategy: (opts: TimeThrottleOptions) => ThrottleStrategy<TimeThrottleOptions> = (opts) => {
+  public getStrategy: (opts: TimeThrottleOptions) => ThrottleStrategy<any> = (opts) => {
     const dateService = this.dateService;
     /**
      * This class is the actual throttling strategy, 

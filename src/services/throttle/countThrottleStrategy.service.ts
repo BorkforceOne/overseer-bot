@@ -15,7 +15,7 @@ interface CountThrottleOptions {
  * Strategy factory for calling your function once out of every numCallsBeforeFiringAgain.
  */
 export class CountThrottleStrategyService implements ThrottleStrategyService<CountThrottleOptions> {
-  public getStrategy: (opts: CountThrottleOptions) => ThrottleStrategy<CountThrottleOptions> = (opts) => {
+  public getStrategy: (opts: CountThrottleOptions) => ThrottleStrategy<any> = (opts) => {
     /**
      * This class is the actual throttling strategy, 
      * where the logic goes.

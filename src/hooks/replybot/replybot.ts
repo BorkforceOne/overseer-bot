@@ -7,6 +7,11 @@ import * as rawconf from "./replybot.config.json";
 
 const CACHE: any = {};
 
+interface FireParams {
+    replies: string[];
+    message: Message;
+}
+
 interface ConfigItemRaw {
     triggers: string[];
     responses: string[];
@@ -16,8 +21,8 @@ interface ConfigItemRaw {
 interface ConfigItem {
     triggers: RegExp[];
     responses: string[];
-    throttleStrat: ThrottleStrategy<any>;
-    callback: (possibleReplies: string[], msg: Message) => void;
+    throttleStrat: ThrottleStrategy<FireParams>;
+    callback: (params: FireParams) => void;
 }
 
 type Config = ConfigItem[];
@@ -51,43 +56,49 @@ export class ReplybotHook implements Hook {
                         throttleStrategies: [
                             throttleStrat,
                         ],
-                        fire: (possibleReplies: string[], message: Message) => {
+                        fire: (params: FireParams) => {
+                            const { replies: possibleReplies, message: msg } = params;
                             const randomReplyIndex = Math.floor(Math.random() * possibleReplies.length);
                             const reply = possibleReplies[randomReplyIndex];
 
-                            message.channel.send(reply);
+                            msg.channel.send(reply);
                         },
                     })
                 }) as ConfigItem;
             }
         );
 
-        client.on("message", (msg: Message) => {
+        client.on("message", (message: Message) => {
 
-            if (msg.channel.type !== "text") {
+            if (message.channel.type !== "text") {
                 return;
             }
-            if (msg.member.user.bot === true) {
+            if (message.member.user.bot === true) {
                 return;
             }
 
             const possibleReplies: Array<((msg: Message) => void)> = [];
 
             for (const item of conf) {
-                if (item.throttleStrat.shouldFire()) {
+                // note: shouldFire was not meant to be called outside 
+                // the returned throttled function. I wouldn't copy this 
+                // anywhere else because it might break in the future.
+                // I'm trying to keep it from breaking for now, but 
+                // no promises.
+                if (item.throttleStrat.shouldFire({ replies: [], message })) {
                     const repliesForItem: string[] = [];
-                    const matches = item.triggers.filter(trigger => trigger.test(msg.content));
+                    const matches = item.triggers.filter(trigger => trigger.test(message.content));
                     if (matches.length > 0) {
                         const randomIndex = Math.floor(Math.random() * item.responses.length);
                         const replyPattern = item.responses[randomIndex];
                         for (const m of matches) {
-                            const execMatches = m.exec(msg.content);
+                            const execMatches = m.exec(message.content);
                             if (execMatches) {
                                 const reply = execMatches[0].replace(m, replyPattern);
                                 repliesForItem.push(reply);
                             }
                         }
-                        possibleReplies.push((msg) => item.callback(repliesForItem, msg));
+                        possibleReplies.push((msg) => item.callback({replies: repliesForItem, message: msg}));
                     }
                 }
             }
@@ -95,7 +106,7 @@ export class ReplybotHook implements Hook {
             if (possibleReplies.length > 0) {
                 const randomIndex = Math.floor(Math.random() * possibleReplies.length);
                 const reply = possibleReplies[randomIndex];
-                reply(msg);
+                reply(message);
             }
         });
     }

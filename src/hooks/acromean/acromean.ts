@@ -1,11 +1,11 @@
-import axios from 'axios';
-import { Message, Client } from 'discord.js';
+import axios from "axios";
+import { Client, Message } from "discord.js";
 
-import { Hook } from '../../utils/hook';
-import { CountThrottleStrategyService } from '../../services/throttle/countThrottleStrategy.service';
-import { TimeThrottleStrategyService } from '../../services/throttle/timeThrottleStrategy.service';
-import { throttle } from '../../services/throttle/throttle';
-import { DiscordService } from '../../services/app/discord_service';
+import { DiscordService } from "../../services/app/discord_service";
+import { CountThrottleStrategyService } from "../../services/throttle/countThrottleStrategy.service";
+import { throttle } from "../../services/throttle/throttle";
+import { TimeThrottleStrategyService } from "../../services/throttle/timeThrottleStrategy.service";
+import { Hook } from "../../utils/hook";
 
 const API = "https://api.datamuse.com/words";
 const MAX_RESULTS = 1000;
@@ -13,7 +13,7 @@ const ACRO_REGEX = new RegExp("^[A-Z]+$");
 const CACHE: any = {};
 const MAX_RESULTS_PER_MSG = 1;
 const BLACKLISTED_WORDS = [
-  'WHAT'
+  "WHAT"
 ];
 const NUM_MESSAGES_BEFORE_FIRING_AGAIN = 10;
 const DURATION_BEFORE_FIRING_AGAIN_MS = 30 * 60 * 1000;
@@ -45,14 +45,14 @@ export class AcromeanHook implements Hook {
     });
 
     client.on("message", (msg) => {
-      if (msg.channel.type === 'text') {
+      if (msg.channel.type === "text") {
         if (msg.member.user.bot === false) {
           let timesRan = 0;
-          const splits = msg.content.split(' ');
-          for (const split of splits) {
-            if (split.length > 1 && split.match(ACRO_REGEX) && BLACKLISTED_WORDS.indexOf(split) === -1) {
+          const splits = msg.content.split(" ");
+          for (const acro of splits) {
+            if (acro.length > 1 && acro.match(ACRO_REGEX) && BLACKLISTED_WORDS.indexOf(acro) === -1) {
               if (timesRan < MAX_RESULTS_PER_MSG) {
-                throttledReply(split, msg);
+                throttledReply({acro, msg});
                 timesRan++;
               }
             }
@@ -62,17 +62,22 @@ export class AcromeanHook implements Hook {
     });
   }
 
-  reply(acro: string, msg: Message) {
+  reply(opts: {
+    acro: string, msg: Message
+  }) {
+    const { 
+      acro, msg,
+    } = opts;
     const promises = [];
     const types: string[] = [];
     for (let i = 0; i < acro.length; i++) {
       promises.push(getForLetter(acro[i]));
       if (i === 0) {
-        types.push('v');
+        types.push("v");
       } else if (i < acro.length - 1) {
-        types.push('adj');
+        types.push("adj");
       } else {
-        types.push('n');
+        types.push("n");
       }
     }
     Promise.all(promises).then(results => {
@@ -82,7 +87,7 @@ export class AcromeanHook implements Hook {
         const filtered = (data as any[]).filter(d => d.tags && d.tags.indexOf(type) > -1);
         finalWords.push(sentenceCase(choose<any>(filtered).word));
       }
-      msg.channel.send(`${acro} (${finalWords.join(' ')})`);
+      msg.channel.send(`${acro} (${finalWords.join(" ")})`);
     });
   }
 }
