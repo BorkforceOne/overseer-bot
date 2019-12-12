@@ -4,6 +4,9 @@ import { throttle, ThrottleStrategy } from "../../services/throttle/throttle";
 import { TimeThrottleStrategyService } from "../../services/throttle/timeThrottleStrategy.service";
 import { Hook } from "../../utils/hook";
 import * as rawconf from "./replybot.config.json";
+import { FuckOffThrottleStrategyService } from "../../services/throttle/fuckOffThrottleStrategy.service";
+import { AndThrottleStrategyService } from "../../services/throttle/andThrottleStrategy.service";
+import { FuckOffStateManager } from "../fuckoff/fuckoff";
 
 const CACHE: any = {};
 
@@ -29,14 +32,14 @@ type Config = ConfigItem[];
 
 export class ReplybotHook implements Hook {
     private readonly client: Client;
-    private readonly throttle: TimeThrottleStrategyService;
 
     constructor(
         private readonly discordService: DiscordService,
-        private readonly timeThrottleStrategyService: TimeThrottleStrategyService
+        private readonly timeThrottleStrategyService: TimeThrottleStrategyService,
+        private readonly fuckOffThrottleStrategyService: FuckOffThrottleStrategyService<FireParams>,
+        private readonly andThrottleStrategyService: AndThrottleStrategyService<FireParams>,
     ) {
         this.client = this.discordService.getClient();
-        this.throttle = timeThrottleStrategyService;
     }
 
     public async init() {
@@ -44,8 +47,16 @@ export class ReplybotHook implements Hook {
 
         const conf: Config = (rawconf as ConfigItemRaw[]).map(
             c => {
-                const throttleStrat = this.throttle.getStrategy({
-                    durationBeforeFiringAgainMs: (c.throttleSeconds || .1) * 1000,
+                const throttleStrat = this.andThrottleStrategyService.getStrategy({
+                    throttles: [
+                        this.fuckOffThrottleStrategyService.getStrategy({
+                            hookId: "replybot",
+                            shouldFire: FuckOffStateManager.shouldFire,
+                        }),
+                        this.timeThrottleStrategyService.getStrategy({
+                            durationBeforeFiringAgainMs: (c.throttleSeconds || .1) * 1000,
+                        }),
+                    ],
                 });
 
                 return ({
