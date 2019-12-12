@@ -6,6 +6,7 @@ import { Hook } from "../../utils/hook";
 const hookIds = [
   "foogle",
   "replybot",
+  "acromean",
 ];
 
 interface FuckOffStatus {

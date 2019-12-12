@@ -2,10 +2,14 @@ import axios from "axios";
 import { Client, Message } from "discord.js";
 
 import { DiscordService } from "../../services/app/discord_service";
+import { AndThrottleStrategyService } from "../../services/throttle/andThrottleStrategy.service";
 import { CountThrottleStrategyService } from "../../services/throttle/countThrottleStrategy.service";
+import { FuckOffThrottleStrategyService } from "../../services/throttle/fuckOffThrottleStrategy.service";
+import { OrThrottleStrategyService } from "../../services/throttle/orThrottleStrategy.service";
 import { throttle } from "../../services/throttle/throttle";
 import { TimeThrottleStrategyService } from "../../services/throttle/timeThrottleStrategy.service";
 import { Hook } from "../../utils/hook";
+import { FuckOffStateManager } from "../fuckoff/fuckoff";
 
 const API = "https://api.datamuse.com/words";
 const MAX_RESULTS = 1000;
@@ -18,6 +22,11 @@ const BLACKLISTED_WORDS = [
 const NUM_MESSAGES_BEFORE_FIRING_AGAIN = 10;
 const DURATION_BEFORE_FIRING_AGAIN_MS = 30 * 60 * 1000;
 
+interface FireParams {
+  acro: string;
+  message: Message;
+}
+
 export class AcromeanHook implements Hook {
   private readonly client: Client;
 
@@ -25,6 +34,9 @@ export class AcromeanHook implements Hook {
     private readonly discordService: DiscordService,
     private readonly countThrottleStrategyService: CountThrottleStrategyService,
     private readonly timeThrottleStrategyService: TimeThrottleStrategyService,
+    private readonly andThrottleStrategyService: AndThrottleStrategyService<FireParams>,
+    private readonly orThrottleStrategyService: OrThrottleStrategyService<FireParams>,
+    private readonly fuckOffThrottleStrategyService: FuckOffThrottleStrategyService<FireParams>,
   ) {
     this.client = this.discordService.getClient();
   }
@@ -35,24 +47,36 @@ export class AcromeanHook implements Hook {
     const throttledReply = throttle({
       fire: this.reply,
       throttleStrategies: [
-        this.countThrottleStrategyService.getStrategy({
-          numCallsBeforeFiringAgain: NUM_MESSAGES_BEFORE_FIRING_AGAIN
-        }),
-        this.timeThrottleStrategyService.getStrategy({
-          durationBeforeFiringAgainMs: DURATION_BEFORE_FIRING_AGAIN_MS
+        this.andThrottleStrategyService.getStrategy({
+          throttles: [
+            this.fuckOffThrottleStrategyService.getStrategy({
+              hookId: "acromean",
+              shouldFire: FuckOffStateManager.shouldFire,
+            }),
+            this.orThrottleStrategyService.getStrategy({
+              throttles: [
+                this.countThrottleStrategyService.getStrategy({
+                  numCallsBeforeFiringAgain: NUM_MESSAGES_BEFORE_FIRING_AGAIN
+                }),
+                this.timeThrottleStrategyService.getStrategy({
+                  durationBeforeFiringAgainMs: DURATION_BEFORE_FIRING_AGAIN_MS
+                }),
+              ],
+            }),
+          ],
         }),
       ],
     });
 
-    client.on("message", (msg) => {
-      if (msg.channel.type === "text") {
-        if (msg.member.user.bot === false) {
+    client.on("message", (message) => {
+      if (message.channel.type === "text") {
+        if (message.member.user.bot === false) {
           let timesRan = 0;
-          const splits = msg.content.split(" ");
+          const splits = message.content.split(" ");
           for (const acro of splits) {
             if (acro.length > 1 && acro.match(ACRO_REGEX) && BLACKLISTED_WORDS.indexOf(acro) === -1) {
               if (timesRan < MAX_RESULTS_PER_MSG) {
-                throttledReply({acro, msg});
+                throttledReply({acro, message});
                 timesRan++;
               }
             }
@@ -62,12 +86,10 @@ export class AcromeanHook implements Hook {
     });
   }
 
-  reply(opts: {
-    acro: string, msg: Message
-  }) {
+  reply(params: FireParams) {
     const { 
-      acro, msg,
-    } = opts;
+      acro, message,
+    } = params;
     const promises = [];
     const types: string[] = [];
     for (let i = 0; i < acro.length; i++) {
@@ -87,7 +109,7 @@ export class AcromeanHook implements Hook {
         const filtered = (data as any[]).filter(d => d.tags && d.tags.indexOf(type) > -1);
         finalWords.push(sentenceCase(choose<any>(filtered).word));
       }
-      msg.channel.send(`${acro} (${finalWords.join(" ")})`);
+      message.channel.send(`${acro} (${finalWords.join(" ")})`);
     });
   }
 }
