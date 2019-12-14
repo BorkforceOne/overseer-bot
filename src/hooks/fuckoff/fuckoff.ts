@@ -7,6 +7,7 @@ const hookIds = [
   "foogle",
   "replybot",
   "acromean",
+  "dadbot",
 ];
 
 interface FuckOffStatus {
