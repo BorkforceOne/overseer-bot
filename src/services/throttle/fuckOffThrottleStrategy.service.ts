@@ -19,6 +19,9 @@ interface FuckOffThrottleOptions {
   hookId: string;
   /** whether or not a bot was told to fuck off */
   shouldFire: (opts: OnOffOpts) => boolean;
+
+  /** optional sass from the bot when told to fuck off */
+  sass?: string[];
 }
 
 /** 
