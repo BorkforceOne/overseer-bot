@@ -1,7 +1,8 @@
-import { Client } from 'discord.js';
-
+import { Client, Message, Emoji } from 'discord.js';
 import { Hook } from '../../utils/hook';
 import { DiscordService } from '../../services/app/discord_service';
+import { RandomThrottleStrategyService } from '../../services/throttle/randomThrottleStrategy.service';
+import { throttle } from '../../services/throttle/throttle';
 
 const list = [
   '⌚',
@@ -204,22 +205,40 @@ const list = [
 export class RandomojiHook implements Hook {
   private readonly client: Client;
 
-  constructor(private readonly discordService: DiscordService) {
+  constructor(
+    private readonly discordService: DiscordService,
+    private readonly randomThrottleStrategyService: RandomThrottleStrategyService,
+  ) {
     this.client = this.discordService.getClient();
   }
 
   async init() {
-    this.client.on('message', (message) => {
-      const chance = 1 / 74;
-      if (Math.random() < chance) {
-        const randomIndex = Math.floor(Math.random() * list.length);
-        const emoji = list[randomIndex];
+
+
+    const react = throttle({
+      throttleStrategies: [
+        this.randomThrottleStrategyService.getStrategy({
+          chance: 1 / 74,
+        })
+      ],
+      fire: (message: Message) => {
+        const emojis = [
+          ...list,
+          ...message.guild.emojis.map((e: Emoji) => e.identifier),
+        ];
+
+        const randomIndex = Math.floor(Math.random() * emojis.length);
+        const emoji = emojis[randomIndex];
 
         if (emoji && message.author.bot === false) {
           message.react(emoji);
         }
-      }
+      },
+    });
 
+
+    this.client.on('message', (message) => {
+      react(message);
     });
   }
 
