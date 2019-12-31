@@ -20,6 +20,7 @@ import { TimeThrottleStrategyService } from "./services/throttle/timeThrottleStr
 import { ServiceRegistrySingleton } from "./utils/service_registry";
 import { OrThrottleStrategyService } from "./services/throttle/orThrottleStrategy.service";
 import { AndThrottleStrategyService } from "./services/throttle/andThrottleStrategy.service";
+import { RandomThrottleStrategyService } from "./services/throttle/randomThrottleStrategy.service";
 
 const ENABLED_HOOKS = [
     "acromeanHook",
@@ -59,6 +60,7 @@ function registerServices() {
     ServiceRegistrySingleton.addService("andThrottleStrategyService", AndThrottleStrategyService);
     ServiceRegistrySingleton.addService("orThrottleStrategyService", OrThrottleStrategyService);
     ServiceRegistrySingleton.addService("fuckOffThrottleStrategyService", FuckOffThrottleStrategyService);
+    ServiceRegistrySingleton.addService("randomThrottleStrategyService", RandomThrottleStrategyService);
 
     ServiceRegistrySingleton.addService("acromeanHook", AcromeanHook);
     ServiceRegistrySingleton.addService("bogovotoHook", BogoVotoHook);
