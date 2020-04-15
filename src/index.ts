@@ -23,6 +23,7 @@ import { AndThrottleStrategyService } from "./services/throttle/andThrottleStrat
 import { RandomThrottleStrategyService } from "./services/throttle/randomThrottleStrategy.service";
 import { FeedMeWordsHook } from "./hooks/feedmewords/feedmewords";
 import { DataService } from "./services/app/data_service";
+import { DavidBotHook } from "./hooks/davidbot/davidbot";
 
 const ENABLED_HOOKS = [
     "acromeanHook",
@@ -38,6 +39,7 @@ const ENABLED_HOOKS = [
     "fuckOffHook",
     "dadbotHook",
     "feedMeWordsHook",
+    "davidBotHook",
 ];
 
 class Main {
@@ -85,6 +87,7 @@ function registerServices() {
     ServiceRegistrySingleton.addService("fuckOffHook", FuckOffHook);
     ServiceRegistrySingleton.addService("dadbotHook", DadbotHook);
     ServiceRegistrySingleton.addService("feedMeWordsHook", FeedMeWordsHook);
+    ServiceRegistrySingleton.addService("davidBotHook", DavidBotHook);
 }
 
 registerServices();
