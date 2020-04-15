@@ -1,10 +1,11 @@
 import { Client } from "discord.js";
+import { config } from "../../utils/config";
 
 export class DiscordService {
   private client = new Client();
 
   async start() {
-    this.client.login(process.env.API_KEY);
+    this.client.login(config.discordApiKey);
   }
 
   getClient() {
