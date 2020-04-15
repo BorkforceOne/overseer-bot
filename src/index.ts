@@ -22,6 +22,7 @@ import { OrThrottleStrategyService } from "./services/throttle/orThrottleStrateg
 import { AndThrottleStrategyService } from "./services/throttle/andThrottleStrategy.service";
 import { RandomThrottleStrategyService } from "./services/throttle/randomThrottleStrategy.service";
 import { FeedMeWordsHook } from "./hooks/feedmewords/feedmewords";
+import { DataService } from "./services/app/data_service";
 
 const ENABLED_HOOKS = [
     "acromeanHook",
@@ -42,13 +43,19 @@ const ENABLED_HOOKS = [
 class Main {
     constructor(
         private readonly discordService: DiscordService,
-        private readonly hooksService: HooksService) {
+        private readonly hooksService: HooksService,
+        private readonly dataService: DataService,
+    ) {
         this.start();
     }
 
     public async start() {
         await this.discordService.start();
         await this.hooksService.start(ENABLED_HOOKS);
+
+        this.dataService.db.collection('app-data').onSnapshot(e => {
+            e.docs.forEach(d => console.log(d.data()));
+        });
     }
 }
 
@@ -57,6 +64,7 @@ function registerServices() {
     ServiceRegistrySingleton.addService("discordService", DiscordService);
     ServiceRegistrySingleton.addService("hooksService", HooksService);
     ServiceRegistrySingleton.addService("dateService", DateService);
+    ServiceRegistrySingleton.addService("dataService", DataService);
     ServiceRegistrySingleton.addService("countThrottleStrategyService", CountThrottleStrategyService);
     ServiceRegistrySingleton.addService("timeThrottleStrategyService", TimeThrottleStrategyService);
     ServiceRegistrySingleton.addService("andThrottleStrategyService", AndThrottleStrategyService);
