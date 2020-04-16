@@ -46,6 +46,17 @@ export class DavidBotHook implements Hook {
   public async init() {
     await this._init();
 
+    this.client.on('messageReactionAdd', async (reaction) => {
+      if (reaction.emoji.name === 'eck') {
+        await this.db.collection('app-data')
+          .doc('david-bot').update({ 'votes.eck': decrement });
+      }
+      if (reaction.emoji.name === 'peacecream') {
+        await this.db.collection('app-data')
+          .doc('david-bot').update({ 'votes.peace': increment });
+      }
+    });
+
     this.client.on("message", async (msg) => {
 
       if (msg.member.user.bot === true) {
@@ -53,16 +64,12 @@ export class DavidBotHook implements Hook {
       }
 
       if (this.matchEck(msg.content)) {
-        await this.db.collection('app-data')
-          .doc('david-bot').update({ 'votes.eck': decrement });
         this.react({
           name: 'eck',
           msg,
         });
       } 
       else if (this.matchPeaceCream(msg.content)){
-        await this.db.collection('app-data')
-          .doc('david-bot').update({ 'votes.peace': increment });
         this.react({
           name: 'peacecream',
           msg,
