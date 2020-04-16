@@ -1,4 +1,4 @@
-import { Client } from "discord.js";
+import { Client, Emoji, Message } from "discord.js";
 
 import { DiscordService } from "../../services/app/discord_service";
 import { DataService } from "../../services/app/data_service";
@@ -17,6 +17,7 @@ const increment = firestore.FieldValue.increment(1);
 export class DavidBotHook implements Hook {
   private readonly client: Client;
   private readonly db: firestore.Firestore;
+  private emojis: {[name: string]: Emoji} = {};
 
   constructor(
     private readonly discordService: DiscordService,
@@ -24,6 +25,10 @@ export class DavidBotHook implements Hook {
   ) {
     this.client = this.discordService.getClient();
     this.db = this.dataService.db;
+  }
+
+  private react({ name, msg }: { name: string, msg: Message }) {
+    msg.react(msg.guild.emojis.find(emoji => emoji.name === name).identifier);
   }
 
   private async _init() {
@@ -50,10 +55,18 @@ export class DavidBotHook implements Hook {
       if (this.matchEck(msg.content)) {
         await this.db.collection('app-data')
           .doc('david-bot').update({ 'votes.eck': decrement });
+        this.react({
+          name: 'eck',
+          msg,
+        });
       } 
       else if (this.matchPeaceCream(msg.content)){
         await this.db.collection('app-data')
           .doc('david-bot').update({ 'votes.peace': increment });
+        this.react({
+          name: 'peacecream',
+          msg,
+        });
       }
       else if (this.matchDisplayVote(msg.content)){
         const doc = await this.db.collection('app-data').doc('david-bot').get();
