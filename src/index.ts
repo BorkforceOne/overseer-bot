@@ -24,6 +24,7 @@ import { RandomThrottleStrategyService } from "./services/throttle/randomThrottl
 import { FeedMeWordsHook } from "./hooks/feedmewords/feedmewords";
 import { DataService } from "./services/app/data_service";
 import { DavidBotHook } from "./hooks/davidbot/davidbot";
+import { SwearBotHook } from "./hooks/swearbot/swearbot";
 
 const ENABLED_HOOKS = [
     "acromeanHook",
@@ -40,6 +41,7 @@ const ENABLED_HOOKS = [
     "dadbotHook",
     "feedMeWordsHook",
     "davidBotHook",
+    "swearBotHook",
 ];
 
 class Main {
@@ -88,6 +90,7 @@ function registerServices() {
     ServiceRegistrySingleton.addService("dadbotHook", DadbotHook);
     ServiceRegistrySingleton.addService("feedMeWordsHook", FeedMeWordsHook);
     ServiceRegistrySingleton.addService("davidBotHook", DavidBotHook);
+    ServiceRegistrySingleton.addService("swearBotHook", SwearBotHook);
 }
 
 registerServices();

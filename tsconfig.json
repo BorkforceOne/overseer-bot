@@ -8,8 +8,8 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "allowJs": true,
-	"sourceMap": true,
-	"resolveJsonModule": true
+    "sourceMap": true,
+    "resolveJsonModule": true,
   },
   "include": [
     "src/**/*"

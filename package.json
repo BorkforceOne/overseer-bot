@@ -15,6 +15,7 @@
     "axios": "^0.18.0",
     "discord.js": "^11.5.1",
     "firebase-admin": "^8.10.0",
+    "profanease": "^1.1.2",
     "typescript": "^3.7.3"
   },
   "devDependencies": {
