@@ -95,7 +95,7 @@ export class SwearBotHook implements Hook {
         const { swears } = doc.data() as any;
         msg.reply(`
 **The swears so far**
-${Object.keys(swears).map(u => `${u}: ${swears[u]}`)}
+${Object.keys(swears).map(u => `${u}: ${swears[u]}`).join('\n')}
         `);
       }
     });
@@ -125,6 +125,7 @@ ${Object.keys(swears).map(u => `${u}: ${swears[u]}`)}
       /(\W|^)naughtybot(?!\w)/g,
       /(\W|^)swearbot(?!\w)/g,
       /(\W|^)swear-bot(?!\w)/g,
+      /(\W|^)swears(?!\w)/g,
     ];
     return patterns.some(r => r.test(msg));
   }
