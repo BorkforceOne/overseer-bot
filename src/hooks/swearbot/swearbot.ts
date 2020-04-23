@@ -32,6 +32,7 @@ const goodEmoji = '🙏🏻';
 export class SwearBotHook implements Hook {
   private readonly client: Client;
   private readonly db: firestore.Firestore;
+  private blacklist: string[] = [];
   private emojis: {[name: string]: Emoji} = {};
 
   constructor(
@@ -47,12 +48,15 @@ export class SwearBotHook implements Hook {
   }
 
   private async _init() {
-    const doc = await this.db.collection('app-data').doc(docId).get();
+    let doc = await this.db.collection('app-data').doc(docId).get();
     if (!doc.exists) {
       await this.db.collection('app-data').doc(docId).create({
         swears: {},
       });
     }
+    this.db.collection('app-data').doc(docId).onSnapshot(e => {
+      this.blacklist = (e.data() as any).blacklist;
+    });
   }
 
   public async init() {
@@ -115,7 +119,7 @@ ${Object.keys(swears)
 
   public matchBad(_msg: string): boolean {
     const msg = _msg.toLowerCase();
-    return new Profanease().check(msg);
+    return new Profanease().check(msg) || this.blacklist.some(w => msg.includes(w));
   }
 
   public matchDisplayVote(_msg: string): boolean {
