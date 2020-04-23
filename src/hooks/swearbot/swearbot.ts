@@ -95,8 +95,10 @@ export class SwearBotHook implements Hook {
         const { swears } = doc.data() as any;
         msg.reply(`
 **The swears so far**
-${Object.keys(swears).map(u => `${u}: ${swears[u]}`).join('\n')}
-        `);
+${Object.keys(swears)
+  .sort((a, b) => swears[a] - swears[b])
+  .map(u => `${u}: ${swears[u]}`).join('\n')}
+`);
       }
     });
   }
