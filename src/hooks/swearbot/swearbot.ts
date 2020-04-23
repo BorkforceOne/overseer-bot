@@ -100,7 +100,7 @@ export class SwearBotHook implements Hook {
         msg.reply(`
 **The swears so far**
 ${Object.keys(swears)
-  .sort((a, b) => swears[a] - swears[b])
+  .sort((a, b) => swears[b] - swears[a])
   .map(u => `${u}: ${swears[u]}`).join('\n')}
 `);
       }
