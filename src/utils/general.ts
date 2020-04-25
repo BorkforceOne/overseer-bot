@@ -1,5 +1,7 @@
 
 import { isObject } from 'util'; 
+import * as fs from 'fs';
+import * as path from 'path';
 
 export function toIntOrNull(n: string): number | null {
   const i = parseInt(n, 10);
@@ -35,4 +37,8 @@ export const initConfig = <T>(config: T): Complete<T> => {
     throw new Error('Some configuration variables could not be loaded. Exiting.');
   }
   return config as any;
-} 
+}
+
+export const resolve = (t: string) => path.resolve(__dirname, t);
+export const exists = (t: string) => fs.existsSync(resolve(t));
+export const read = (t: string) => exists(t) ? fs.readFileSync(resolve(t), 'utf-8') : null;

@@ -25,8 +25,9 @@ import { FeedMeWordsHook } from "./hooks/feedmewords/feedmewords";
 import { DataService } from "./services/app/data_service";
 import { DavidBotHook } from "./hooks/davidbot/davidbot";
 import { SwearBotHook } from "./hooks/swearbot/swearbot";
+import { InfoHook } from "./hooks/info/info";
 
-const ENABLED_HOOKS = [
+export const ENABLED_HOOKS = [
     "acromeanHook",
     "bogovotoHook",
     "foogleHook",
@@ -42,6 +43,7 @@ const ENABLED_HOOKS = [
     "feedMeWordsHook",
     "davidBotHook",
     "swearBotHook",
+    "infoHook",
 ];
 
 class Main {
@@ -91,6 +93,7 @@ function registerServices() {
     ServiceRegistrySingleton.addService("feedMeWordsHook", FeedMeWordsHook);
     ServiceRegistrySingleton.addService("davidBotHook", DavidBotHook);
     ServiceRegistrySingleton.addService("swearBotHook", SwearBotHook);
+    ServiceRegistrySingleton.addService("infoHook", InfoHook);
 }
 
 registerServices();

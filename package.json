@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./dist/index.js",
     "test": "jest",
-    "debug": "node -r ts-node/register -r dotenv/config src/index.ts dotenv_config_path=./envs/local/local.env",
+    "debug": "env NODE_ENV=development node -r ts-node/register -r dotenv/config src/index.ts dotenv_config_path=./envs/local/local.env",
     "build": "tsc"
   },
   "author": "",
@@ -15,6 +15,7 @@
     "axios": "^0.18.0",
     "discord.js": "^11.5.1",
     "firebase-admin": "^8.10.0",
+    "mkdirp": "^1.0.4",
     "profanease": "^1.1.2",
     "typescript": "^3.7.3"
   },

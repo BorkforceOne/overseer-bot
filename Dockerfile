@@ -15,6 +15,8 @@ COPY ./src ./src
 
 # Build Boi
 RUN npm run build
+RUN npm i -g ts-node
+RUN ./tools/copy-assets.ts
 
 ARG SOURCE_COMMIT
 ENV SOURCE_COMMIT=$SOURCE_COMMIT
