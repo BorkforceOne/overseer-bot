@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.18.0",
+    "cheerio": "^1.0.0-rc.3",
     "discord.js": "^11.5.1",
     "firebase-admin": "^8.10.0",
     "mkdirp": "^1.0.4",
@@ -20,6 +21,7 @@
     "typescript": "^3.7.3"
   },
   "devDependencies": {
+    "@types/cheerio": "^0.22.18",
     "@types/jest": "^24.0.23",
     "@types/node": "^10.12.12",
     "dotenv": "^6.2.0",
