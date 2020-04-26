@@ -125,12 +125,12 @@ export class InfoHook implements Hook {
     },
     (msg: string) => {
       const patterns: RegExp[] = [
-        /(\W|^)about$/g,
-        /(\W|^)man$/g,
-        /(\W|^)help$/g,
-        /(\W|^)--help$/g,
-        /(\W|^)-h$/g,
-        /(\W|^)info$/g,
+        /^about$/g,
+        /^man$/g,
+        /^help$/g,
+        /^--help$/g,
+        /^-h$/g,
+        /^info$/g,
       ];
       return patterns.some(r => r.test(msg));
     },
@@ -139,8 +139,8 @@ export class InfoHook implements Hook {
   public matchHook = (msg: string) => [
     (msg: string) => {
       const patterns: RegExp[] = [
-        /(\W|^)hook\s*\d+/g,
-        /(\W|^)hook\s*\w+Hook/g,
+        /^hook\s*\d+/g,
+        /^hook\s*\w+Hook/g,
       ];
       return patterns.some(r => r.test(msg));
     },
@@ -149,10 +149,10 @@ export class InfoHook implements Hook {
   public matchSource = (msg: string) => [
     (msg: string) => {
       const patterns: RegExp[] = [
-        /(\W|^)source/g,
-        /(\W|^)source\s*\w+Hook/g,
-        /(\W|^)code/g,
-        /(\W|^)code\s*\w+Hook/g,
+        /^source/g,
+        /^source\s*\w+Hook/g,
+        /^code/g,
+        /^code\s*\w+Hook/g,
       ];
       return patterns.some(r => r.test(msg));
     },
