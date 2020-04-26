@@ -136,6 +136,7 @@ export class ListHook implements Hook {
 
 Example usage:
 \`\`\`sh
+ls .
 touch movies
 add movies Boondock Saints
 ls movies
@@ -144,6 +145,21 @@ ls movies
 rm movies Boondock Saints
 \`\`\`
           `);
+        }
+        case 'ls .': {
+          const lists = await this.lists();
+          const m = lists
+            .map(l => `${l.data.name}: ${sortItems(l).slice(0, 10).join(', ')}`)
+            .join('\n') || 'None';
+          const resp = new RichEmbed()
+            .setAuthor(
+              client.user.username,
+              client.user.avatarURL,
+            )
+            .setTitle('Lists')
+            .setDescription(m)
+            ;
+          return msg.reply(resp);
         }
         default:
           const _exhaustiveSwitch: never = instruction;
@@ -172,6 +188,14 @@ rm movies Boondock Saints
       data: doc.data() as any,
     };
   } 
+
+  private async lists(): Promise<List[]> {
+    const e = await this.db.collection(repo).get();
+    return e.docs.map(doc => ({
+      id: doc.id,
+      data: doc.data() as any,
+    }));
+  }
 
   public match = (msg: string) => ([
     (msg: string) => {
@@ -266,10 +290,28 @@ rm movies Boondock Saints
         payload: {},
       } as Instruction;
     },
+    (msg: string) => {
+      const patterns: RegExp[] = [
+        /^ls \.$/g,
+        /^list \.$/g,
+      ];
+      if (!patterns.some(r => r.test(msg))) {
+        return;
+      }
+      return {
+        action: 'ls .',
+        payload: {},
+      } as Instruction;
+    },
   ].find(m => m(msg.toLowerCase()))||(()=>null))(msg);
 } 
 
 type Instruction = 
+{
+  action: 'ls .',
+  payload: {},
+}
+|
 {
   action: 'help',
   payload: {},
