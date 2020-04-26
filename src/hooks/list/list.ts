@@ -99,9 +99,9 @@ export class ListHook implements Hook {
 
           return msg.reply(`${action}'d ${payload.item} in list: ${list.data.name}`);
         }
-        case 'ls':
+        case 'ls': {
           const { payload } = instruction;
-          const list = await this.list(payload.list); 
+          const list = await this.list(payload.list);
           if (!list)
             return `listing ${payload.list} failed.`;
           const resp = new RichEmbed()
@@ -112,15 +112,31 @@ export class ListHook implements Hook {
             .setTitle(payload.list)
             ;
           const items = list.data.items.ids
-              .map(id => list.data.items.byId[id])
-              .sort((a, b) => 
-                b.upvoters.length - b.upvoters.length -
-                a.upvoters.length - a.downvoters.length
-              )
-              .map(i => `${i.upvoters.length-i.downvoters.length}: ${i.id}`)
-              .join('\n') || 'None';
+            .map(id => list.data.items.byId[id])
+            .sort((a, b) =>
+              b.upvoters.length - b.upvoters.length -
+              a.upvoters.length - a.downvoters.length
+            )
+            .map(i => `${i.upvoters.length - i.downvoters.length}: ${i.id}`)
+            .join('\n') || 'None';
           resp.addField('Items', items);
           return msg.reply(resp);
+        }
+        case 'help': {
+          return msg.reply(`
+\`list\` bot lets you keep track and vote on items in a list.
+
+Example usage:
+\`\`\`sh
+touch movies
+add movies Boondock Saints
+ls movies
+-1 movies Boondock Saints
++1 movies Boondock Saints
+rm movies Boondock Saints
+\`\`\`
+          `);
+        }
         default:
           const _exhaustiveSwitch: never = instruction;
       }
@@ -153,6 +169,7 @@ export class ListHook implements Hook {
     (msg: string) => {
       const patterns: RegExp[] = [
         /^ls \w+$/g,
+        /^list \w+$/g,
       ];
       if (!patterns.some(r => r.test(msg))) {
         return;
@@ -182,6 +199,7 @@ export class ListHook implements Hook {
     (msg: string) => {
       const patterns: RegExp[] = [
         /^rm \w+ \w+/g,
+        /^remove \w+ \w+/g,
       ];
       if (!patterns.some(r => r.test(msg))) {
         return;
@@ -197,6 +215,8 @@ export class ListHook implements Hook {
     (msg: string) => {
       const patterns: RegExp[] = [
         /^\+1 \w+ \w+/g,
+        /^plus one \w+ \w+/g,
+        /^upvote \w+ \w+/g,
       ];
       if (!patterns.some(r => r.test(msg))) {
         return;
@@ -212,6 +232,8 @@ export class ListHook implements Hook {
     (msg: string) => {
       const patterns: RegExp[] = [
         /^\-1 \w+ \w+/g,
+        /^minus one \w+ \w+/g,
+        /^downvote \w+ \w+/g,
       ];
       if (!patterns.some(r => r.test(msg))) {
         return;
@@ -224,10 +246,27 @@ export class ListHook implements Hook {
         },
       } as Instruction;
     },
+    (msg: string) => {
+      const patterns: RegExp[] = [
+        /^list$/g,
+      ];
+      if (!patterns.some(r => r.test(msg))) {
+        return;
+      }
+      return {
+        action: 'help',
+        payload: {},
+      } as Instruction;
+    },
   ].find(m => m(msg.toLowerCase()))||(()=>null))(msg);
 } 
 
 type Instruction = 
+{
+  action: 'help',
+  payload: {},
+}
+|
 {
   action: 'touch',
   payload: {
