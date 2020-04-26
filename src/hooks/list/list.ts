@@ -7,6 +7,17 @@ import { DataService } from "../../services/app/data_service";
 /** the collection for this bot */
 const repo = 'list';
 
+const compareItems = (a: Item, b: Item) => 
+  b.upvoters.length - b.downvoters.length 
+    - (a.upvoters.length - a.downvoters.length);
+
+const sortItems = (list: List) => {
+  return list.data.items.ids
+    .map(id => list.data.items.byId[id])
+    .sort(compareItems)
+    .map(item => item.id);
+}
+
 export class ListHook implements Hook {
   private readonly client: Client;
   private readonly db: firestore.Firestore;
@@ -113,10 +124,7 @@ export class ListHook implements Hook {
             ;
           const items = list.data.items.ids
             .map(id => list.data.items.byId[id])
-            .sort((a, b) =>
-              b.upvoters.length - b.upvoters.length -
-              a.upvoters.length - a.downvoters.length
-            )
+            .sort(compareItems)
             .map(i => `${i.upvoters.length - i.downvoters.length}: ${i.id}`)
             .join('\n') || 'None';
           resp.addField('Items', items);
