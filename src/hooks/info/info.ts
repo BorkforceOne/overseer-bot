@@ -27,7 +27,7 @@ const getHookMeta = (_msg: string) => {
   const contentsPath = process.env.NODE_ENV === 'development' ?
     `../hooks/${hookname}/${hookname}.ts`
     :
-    `../src/hooks/${hookname}/${hookname}.ts`;
+    `../../src/hooks/${hookname}/${hookname}.ts`;
   const contents = read(contentsPath);
   const code = `
 \`\`\`typescript
