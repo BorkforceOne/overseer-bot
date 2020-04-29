@@ -17,17 +17,17 @@ const goodEmoji = '🙏🏻';
  * counts swears
  * 
  * To see swears:
-    /(\W|^)who shall be smote(?!\w)/g,
-    /(\W|^)who is naughtiest(?!\w)/g,
-    /(\W|^)who's naughty(?!\w)/g,
-    /(\W|^)naughtybot(?!\w)/g,
-    /(\W|^)swearbot(?!\w)/g,
-    /(\W|^)swear-bot(?!\w)/g,
+    /^who shall be smote$/g,
+    /^who is naughtiest$/g,
+    /^who's naughty$/g,
+    /^naughtybot$/g,
+    /^swearbot$/g,
+    /^swear-bot$/g,
 
   To repent:
-    /(\W|^)pray(?!\w)/g,
-    /(\W|^)repent(?!\w)/g,
-    /(\W|^)forgive me(?!\w)/g, 
+    /^pray$/g,
+    /^repent$/g,
+    /^forgive me$/g, 
  */
 export class SwearBotHook implements Hook {
   private readonly client: Client;
@@ -110,9 +110,9 @@ ${Object.keys(swears)
   public matchGood(_msg: string): boolean {
     const msg = _msg.toLowerCase();
     const patterns: RegExp[] = [
-      /(\W|^)pray(?!\w)/g,
-      /(\W|^)repent(?!\w)/g,
-      /(\W|^)forgive me(?!\w)/g,
+      /^pray$/g,
+      /^repent$/g,
+      /^forgive me$/g,
     ];
     return patterns.some(r => r.test(msg));
   }
@@ -125,13 +125,14 @@ ${Object.keys(swears)
   public matchDisplayVote(_msg: string): boolean {
     const msg = _msg.toLowerCase();
     const patterns: RegExp[] = [
-      /(\W|^)who shall be smote(?!\w)/g,
-      /(\W|^)who is naughtiest(?!\w)/g,
-      /(\W|^)who's naughty(?!\w)/g,
-      /(\W|^)naughtybot(?!\w)/g,
-      /(\W|^)swearbot(?!\w)/g,
-      /(\W|^)swear-bot(?!\w)/g,
-      /(\W|^)swears(?!\w)/g,
+
+      /^who shall be smote$/g,
+      /^who is naughtiest$/g,
+      /^who's naughty$/g,
+      /^naughtybot$/g,
+      /^swearbot$/g,
+      /^swear-bot$/g,
+
     ];
     return patterns.some(r => r.test(msg));
   }
