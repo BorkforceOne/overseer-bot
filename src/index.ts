@@ -27,6 +27,7 @@ import { DavidBotHook } from "./hooks/davidbot/davidbot";
 import { SwearBotHook } from "./hooks/swearbot/swearbot";
 import { InfoHook } from "./hooks/info/info";
 import { ListHook } from "./hooks/list/list";
+import { GetHook } from "./hooks/get/get";
 
 export const ENABLED_HOOKS = [
     "acromeanHook",
@@ -46,6 +47,7 @@ export const ENABLED_HOOKS = [
     "swearBotHook",
     "infoHook",
     "listHook",
+    "getHook",
 ];
 
 class Main {
@@ -97,6 +99,7 @@ function registerServices() {
     ServiceRegistrySingleton.addService("swearBotHook", SwearBotHook);
     ServiceRegistrySingleton.addService("infoHook", InfoHook);
     ServiceRegistrySingleton.addService("listHook", ListHook);
+    ServiceRegistrySingleton.addService("getHook", GetHook);
 }
 
 registerServices();
