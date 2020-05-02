@@ -28,6 +28,7 @@ import { SwearBotHook } from "./hooks/swearbot/swearbot";
 import { InfoHook } from "./hooks/info/info";
 import { ListHook } from "./hooks/list/list";
 import { GetHook } from "./hooks/get/get";
+import { ListService } from "./services/app/list_service";
 
 export const ENABLED_HOOKS = [
     "acromeanHook",
@@ -81,6 +82,7 @@ function registerServices() {
     ServiceRegistrySingleton.addService("orThrottleStrategyService", OrThrottleStrategyService);
     ServiceRegistrySingleton.addService("fuckOffThrottleStrategyService", FuckOffThrottleStrategyService);
     ServiceRegistrySingleton.addService("randomThrottleStrategyService", RandomThrottleStrategyService);
+    ServiceRegistrySingleton.addService("listService", ListService);
 
     ServiceRegistrySingleton.addService("acromeanHook", AcromeanHook);
     ServiceRegistrySingleton.addService("bogovotoHook", BogoVotoHook);

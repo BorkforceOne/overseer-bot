@@ -3,6 +3,7 @@ import { DiscordService } from "../../services/app/discord_service";
 import { Hook } from "../../utils/hook";
 import { firestore } from "firebase-admin";
 import { DataService } from "../../services/app/data_service";
+import { Item, List, ListService } from "../../services/app/list_service";
 
 /** the collection for this bot */
 const repo = 'list';
@@ -25,6 +26,7 @@ export class ListHook implements Hook {
   constructor(
     private readonly discordService: DiscordService,
     private readonly dataService: DataService,
+    private readonly listService: ListService,
   ) {
     this.client = this.discordService.getClient();
     this.db = this.dataService.db;
@@ -173,20 +175,7 @@ rm movies Boondock Saints
   }
 
   private async list(list: string): Promise<List> {
-    let doc = await this.db.collection(repo).doc(list).get();
-    if (!doc.exists) {
-      await this.db.collection(repo).doc(list).create({
-        name: list,
-        items: {
-          byId: {},
-          ids: [],
-        },
-      });
-    }
-    return {
-      id: doc.id,
-      data: doc.data() as any,
-    };
+    return await this.listService.list(list);
   } 
 
   private async lists(): Promise<List[]> {
@@ -361,23 +350,4 @@ type Instruction =
     list: string,
     item: string,
   },
-}
-
-interface Item {
-  id: string,
-  /** people who voted up on this item */
-  upvoters: string[],
-  /** people who voted down on this item */
-  downvoters: string[],
-}
-
-interface List {
-  id: string,
-  data: {
-    name: string,
-    items: {
-      ids: string[];
-      byId: {[id:string]: Item}
-    }
-  }
 }
