@@ -4,6 +4,7 @@ import { DiscordService } from "../../services/app/discord_service";
 import { DataService } from "../../services/app/data_service";
 import { Hook } from "../../utils/hook";
 import { firestore } from "firebase-admin";
+import { ListService } from "../../services/app/list_service";
 const Profanease = require('profanease');
 
 const decrement = firestore.FieldValue.increment(-1);
@@ -33,11 +34,13 @@ export class SwearBotHook implements Hook {
   private readonly client: Client;
   private readonly db: firestore.Firestore;
   private blacklist: string[] = [];
+  private whitelist: string[] = [];
   private emojis: {[name: string]: Emoji} = {};
 
   constructor(
     private readonly discordService: DiscordService,
     private readonly dataService: DataService,
+    private readonly listService: ListService,
   ) {
     this.client = this.discordService.getClient();
     this.db = this.dataService.db;
@@ -54,8 +57,20 @@ export class SwearBotHook implements Hook {
         swears: {},
       });
     }
-    this.db.collection('app-data').doc(docId).onSnapshot(e => {
-      this.blacklist = (e.data() as any).blacklist;
+    await this.listService.list('swearsBlacklist');
+    await this.listService.list('swearsWhitelist');
+    this.listService.onSnapshot(l => {
+      const list = l.data.items.ids.map(id => l.data.items.byId[id].id);
+      switch (l.data.name) {
+        case 'swearsBlacklist': {
+          this.blacklist = list;
+          break;
+        }
+        case 'swearsWhitelist': {
+          this.whitelist = list;
+          break;
+        }
+      }
     });
   }
 
@@ -119,7 +134,10 @@ ${Object.keys(swears)
 
   public matchBad(_msg: string): boolean {
     const msg = _msg.toLowerCase();
-    return new Profanease().check(msg) || this.blacklist.some(w => msg.includes(w));
+    return new Profanease().check(msg) 
+      && !this.whitelist.some(w => msg.includes(w)) 
+      || this.blacklist.some(w => msg.includes(w))
+      ;
   }
 
   public matchDisplayVote(_msg: string): boolean {

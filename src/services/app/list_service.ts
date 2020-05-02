@@ -25,7 +25,7 @@ export interface List {
   }
 }
 
-/** the collection for this bot */
+/** the collection for this bot */ 
 const repo = 'list';
 export class ListService {
   private readonly db: firestore.Firestore;
@@ -39,6 +39,15 @@ export class ListService {
   public async init() {
   } 
 
+  public onSnapshot(fn: (list: List) => void) {
+    return this.db.collection(repo).onSnapshot(e => {
+      e.docs.map(d => ({
+        id: d.id,
+        data: d.data() as any,
+      })).forEach(fn);
+    });
+  } 
+
   public async list(list: string): Promise<List> {
     let doc = await this.db.collection(repo).doc(list).get();
     if (!doc.exists) {
@@ -49,6 +58,7 @@ export class ListService {
           ids: [],
         },
       });
+      doc = await this.db.collection(repo).doc(list).get();
     }
     return {
       id: doc.id,
