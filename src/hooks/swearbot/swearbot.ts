@@ -133,10 +133,14 @@ ${Object.keys(swears)
   }
 
   public matchBad(_msg: string): boolean {
-    const msg = _msg.toLowerCase();
-    return new Profanease().check(msg) 
-      && !this.whitelist.some(w => msg.includes(w)) 
-      || this.blacklist.some(w => msg.includes(w))
+    const msgs = _msg.toLowerCase()
+      .split(' ')
+      .map(w => w.match(/\w+/i)?.[0])
+      .filter(w => w !== undefined)
+      ;
+    return new Profanease().check(_msg) 
+      && !this.whitelist.some(w => msgs.some(m => m === w))
+      || this.blacklist.some(w => msgs.some(m => m === w))
       ;
   }
 
