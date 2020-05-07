@@ -1,5 +1,5 @@
 # Specify the node base image
-FROM node:10-alpine
+FROM node:10-slim
 
 ###
 # Install puppeteer
