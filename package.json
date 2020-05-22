@@ -18,14 +18,12 @@
     "firebase-admin": "^8.10.0",
     "mkdirp": "^1.0.4",
     "profanease": "^1.1.2",
-    "puppeteer": "^3.0.2",
     "typescript": "^3.7.3"
   },
   "devDependencies": {
     "@types/cheerio": "^0.22.18",
     "@types/jest": "^24.0.23",
     "@types/node": "^10.12.12",
-    "@types/puppeteer": "^2.0.1",
     "dotenv": "^6.2.0",
     "jest": "^24.9.0",
     "ts-jest": "^24.1.0",
