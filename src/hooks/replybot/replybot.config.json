@@ -17,7 +17,8 @@
 			"space"
 		],
 		"responses": [
-			"http://i.somethingawful.com/mjolnir/images/frolixo~happybadger.jpg"
+			"http://i.somethingawful.com/mjolnir/images/frolixo~happybadger.jpg",
+			"https://imgur.com/ZUkpkbG"
         ],
         "throttleSeconds": 600
 	},
