@@ -70,7 +70,7 @@ export class AcromeanHook implements Hook {
 
     client.on("message", (message) => {
       if (message.channel.type === "text") {
-        if (message.member.user.bot === false) {
+        if (message.member?.user?.bot === false) {
           let timesRan = 0;
           const splits = message.content.split(" ");
           for (const acro of splits) {

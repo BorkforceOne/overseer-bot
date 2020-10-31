@@ -78,7 +78,7 @@ export class DadbotHook implements Hook {
             if (message.channel.type !== "text") {
                 return;
             }
-            if (message.member.user.bot === true) {
+            if (message.member?.user?.bot !== false) {
                 return;
             }
 
