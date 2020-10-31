@@ -93,7 +93,7 @@ export class SwearBotHook implements Hook {
 
     this.client.on("message", async (msg) => {
 
-      if (msg.member.user.bot === true) {
+      if (msg.member?.user?.bot !== false) {
         return;
       }
 

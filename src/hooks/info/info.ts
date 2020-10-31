@@ -58,7 +58,7 @@ export class InfoHook implements Hook {
 
     client.on("message", async (msg) => {
 
-      if (msg.member.user.bot === true) {
+      if (msg.member?.user?.bot !== false) {
         return;
       }
 

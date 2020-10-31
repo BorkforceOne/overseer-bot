@@ -16,14 +16,16 @@ export class WhatHook implements Hook {
 
     client.on("message", (msg) => {
       if (msg.channel.type === 'text') {
-        if (msg.member.user.bot === false) {
-          if (msg.content !== 'WHAT') {
-            CACHE[msg.channel.id] = msg.content;
-          } else if (CACHE[msg.channel.id]) {
-            msg.channel.send(`${CACHE[msg.channel.id].toUpperCase()}`);
-          }
+        if (msg.member?.user?.bot !== false) {
+          return;
         }
-      }
+        
+        if (msg.content !== 'WHAT') {
+          CACHE[msg.channel.id] = msg.content;
+        } else if (CACHE[msg.channel.id]) {
+          msg.channel.send(`${CACHE[msg.channel.id].toUpperCase()}`);
+        }
+    }
     });
   }
 }

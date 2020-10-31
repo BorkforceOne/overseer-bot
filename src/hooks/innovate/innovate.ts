@@ -14,7 +14,7 @@ export class InnovateHook implements Hook {
 
     this.client.on("message", (msg) => {
 
-      if (msg.member.user.bot === true) {
+      if (msg.member?.user?.bot !== false) {
         return;
       }
 
