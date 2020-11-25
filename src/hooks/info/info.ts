@@ -1,4 +1,4 @@
-import { Client, RichEmbed } from "discord.js";
+import { Client, MessageEmbed } from "discord.js";
 import { DiscordService } from "../../services/app/discord_service";
 import { Hook } from "../../utils/hook";
 import { ENABLED_HOOKS } from "../..";
@@ -67,10 +67,10 @@ export class InfoHook implements Hook {
         if (!meta)
           return msg.reply('Hook not found');
         const { hookname, url, contentsPath, hook } = meta;
-        const resp = new RichEmbed()
+        const resp = new MessageEmbed()
           .setAuthor(
-            client.user.username,
-            client.user.avatarURL,
+            client.user?.username,
+            client.user?.avatarURL() ?? undefined,
           )
           .setTitle(hookname)
           .setDescription(`Here is info on ${hookname}.`)
@@ -78,7 +78,7 @@ export class InfoHook implements Hook {
           .addField('Source', url)
           .addField('Code Preview', `Type \`code ${hook}\`.`)
           .setColor(0x00AE86)
-          .attachFile(contentsPath)
+          .attachFiles([contentsPath])
         ;
         return msg.reply(resp);
       }
@@ -92,10 +92,10 @@ export class InfoHook implements Hook {
       }
 
       if (this.match(msg.content)) {
-        const resp = new RichEmbed()
+        const resp = new MessageEmbed()
           .setAuthor(
-            client.user.username,
-            client.user.avatarURL,
+            client.user?.username,
+            client.user?.avatarURL() ?? undefined,
           )
           .setColor(0x00AE86)
           .setDescription('You asked for info on Overseer. Here are the registered hooks. Type `hook 0` or `hook acromean` to see more info on that hook.')

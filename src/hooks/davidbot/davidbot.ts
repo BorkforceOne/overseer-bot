@@ -28,7 +28,9 @@ export class DavidBotHook implements Hook {
   }
 
   private react({ name, msg }: { name: string, msg: Message }) {
-    msg.react(msg.guild.emojis.find(emoji => emoji.name === name).identifier);
+    if (msg.guild) {
+      msg.react(msg.guild.emojis.resolve(name)!.identifier);
+    }
   }
 
   private async _init() {

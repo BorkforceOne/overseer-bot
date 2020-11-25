@@ -27,7 +27,7 @@ export class SnapchatHook implements Hook {
         return;
 
       // delete after five minutes
-      msg.delete(1000 * 60 * 5);
+      msg.delete({ timeout: 1000 * 60 * 5 });
     });
   }
 }

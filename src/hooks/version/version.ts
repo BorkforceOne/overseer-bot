@@ -1,4 +1,4 @@
-import { Client, RichEmbed } from 'discord.js';
+import { Client, MessageEmbed } from 'discord.js';
 
 import { DiscordService } from '../../services/app/discord_service';
 import { Hook } from '../../utils/hook';
@@ -31,11 +31,11 @@ export class VersionHook implements Hook {
         const $ = cheerio.load(res.data);
         const title = $("title").text();
 
-        const resp = new RichEmbed()
+        const resp = new MessageEmbed()
           .setTitle(title)
           .setAuthor(
-            client.user.username,
-            client.user.avatarURL,
+            client.user?.username,
+            client.user?.avatarURL() ?? undefined,
           )
           .setColor(0x00AE86)
           .setDescription(

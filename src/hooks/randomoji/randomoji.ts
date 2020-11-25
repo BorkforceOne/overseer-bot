@@ -1,4 +1,4 @@
-import { Client, Message, Emoji } from 'discord.js';
+import { Client, Message, Emoji, GuildEmoji } from 'discord.js';
 import { Hook } from '../../utils/hook';
 import { DiscordService } from '../../services/app/discord_service';
 import { RandomThrottleStrategyService } from '../../services/throttle/randomThrottleStrategy.service';
@@ -224,7 +224,7 @@ export class RandomojiHook implements Hook {
       fire: (message: Message) => {
         const emojis = [
           ...list,
-          ...message.guild.emojis.map((e: Emoji) => e.identifier),
+          ...message.guild!.emojis.cache.map((e: GuildEmoji) => e.identifier),
         ];
 
         const randomIndex = Math.floor(Math.random() * emojis.length);

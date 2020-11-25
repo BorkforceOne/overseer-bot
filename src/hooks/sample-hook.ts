@@ -13,7 +13,7 @@ export class SampleHook implements Hook {
     const { client } = this;
 
     client.on("ready", () => {
-      console.log(`Logged in as ${client.user.tag}!`);
+      console.log(`Logged in as ${client.user?.tag}!`);
     });
 
     client.on("message", (msg) => {

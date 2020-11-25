@@ -1,4 +1,4 @@
-import { Client, RichEmbed } from "discord.js";
+import { Client, MessageEmbed } from "discord.js";
 import { DiscordService } from "../../services/app/discord_service";
 import { Hook } from "../../utils/hook";
 import { firestore } from "firebase-admin";
@@ -117,10 +117,10 @@ export class ListHook implements Hook {
           const list = await this.list(payload.list);
           if (!list)
             return `listing ${payload.list} failed.`;
-          const resp = new RichEmbed()
+          const resp = new MessageEmbed()
             .setAuthor(
-              client.user.username,
-              client.user.avatarURL,
+              client.user?.username,
+              client.user?.avatarURL() ?? undefined,
             )
             .setTitle(payload.list)
             ;
@@ -153,10 +153,10 @@ rm movies Boondock Saints
           const m = lists
             .map(l => `${l.data.name}: ${sortItems(l).slice(0, 10).join(', ')}`)
             .join('\n') || 'None';
-          const resp = new RichEmbed()
+          const resp = new MessageEmbed()
             .setAuthor(
-              client.user.username,
-              client.user.avatarURL,
+              client.user?.username,
+              client.user?.avatarURL() ?? undefined,
             )
             .setTitle('Lists')
             .setDescription(m)

@@ -24,7 +24,7 @@ export class FeedMeWordsHook implements Hook {
             const match = REGEX.exec(message.content);
             if (match) {
                 const mentionedUserId = match[1];
-                const mentionedUser = await message.client.fetchUser(mentionedUserId, true);
+                const mentionedUser = await message.client.users.fetch(mentionedUserId, true);
                 if (mentionedUser && mentionedUser.bot) {
                     // OK
                     let mentionedChannelId: string | undefined = match[2];
