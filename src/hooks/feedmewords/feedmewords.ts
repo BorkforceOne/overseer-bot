@@ -2,7 +2,7 @@ import { Client, Message } from 'discord.js';
 import { Hook } from '../../utils/hook';
 import { DiscordService } from '../../services/app/discord_service';
 
-const REGEX = /^<@!(\d+)>\s*reply(?: in <#(\d+)>)?(.+)$/i;
+const REGEX = /^(?:-d )?<@\D?(\d+)>\s*reply(?: in <#(\d+)>)?(.+)$/i;
 
 export class FeedMeWordsHook implements Hook {
     private readonly client: Client;
@@ -22,6 +22,7 @@ export class FeedMeWordsHook implements Hook {
         this.client.on('message', async (message) => {
 
             const match = REGEX.exec(message.content);
+
             if (match) {
                 const mentionedUserId = match[1];
                 const mentionedUser = await message.client.users.fetch(mentionedUserId, true);
@@ -45,7 +46,6 @@ export class FeedMeWordsHook implements Hook {
                         try {
                             mentionedChannel.channel.startTyping();
 
-                            await message.delete();
     
                             setTimeout(() => {
                                 mentionedChannel!.channel.send(intendedMessage.trim());
@@ -53,6 +53,9 @@ export class FeedMeWordsHook implements Hook {
                             }, 1000);
                         }
                         finally {
+                            if (message.content.startsWith('-d ')) {
+                                await message.delete();
+                            }
                             delete this.CACHE[mentionedChannelId];
                         }
 
