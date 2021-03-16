@@ -17,7 +17,7 @@ const channelName = 'war-of-the-davids';
  */
 export class DavidBotHook implements Hook {
   private readonly client: Client;
-  private readonly db: firestore.Firestore;
+  private readonly db: firestore.Firestore | null;
 
   constructor(
     private readonly discordService: DiscordService,
@@ -34,27 +34,29 @@ export class DavidBotHook implements Hook {
   }
 
   private async _init() {
-    const doc = await this.db.collection('app-data').doc('david-bot').get();
-    const data = doc.data() as any;
-    if (!doc.exists) {
-      await this.db.collection('app-data').doc('david-bot').create({
-        votes: {
-          eck: 0,
-          peace: 0,
-        },
-        sender: {
-          peace: false,
-          eck: false,
-        },
-      });
-    } else if (!data.sender) {
-      await this.db.collection('app-data')
-        .doc('david-bot').set({
+    if (this.db) {
+      const doc = await this.db.collection('app-data').doc('david-bot').get();
+      const data = doc.data() as any;
+      if (!doc.exists) {
+        await this.db.collection('app-data').doc('david-bot').create({
+          votes: {
+            eck: 0,
+            peace: 0,
+          },
           sender: {
             peace: false,
             eck: false,
           },
-        }, { merge: true });
+        });
+      } else if (!data.sender) {
+        await this.db.collection('app-data')
+          .doc('david-bot').set({
+            sender: {
+              peace: false,
+              eck: false,
+            },
+          }, { merge: true });
+      }
     }
   }
 
@@ -63,11 +65,11 @@ export class DavidBotHook implements Hook {
 
     this.client.on('messageReactionAdd', async (reaction) => {
       if (reaction.emoji.name === 'eck') {
-        await this.db.collection('app-data')
+        await this.db?.collection('app-data')
           .doc('david-bot').update({ 'votes.eck': decrement });
       }
       if (reaction.emoji.name === 'peacecream') {
-        await this.db.collection('app-data')
+        await this.db?.collection('app-data')
           .doc('david-bot').update({ 'votes.peace': increment });
       }
     });
@@ -87,15 +89,17 @@ export class DavidBotHook implements Hook {
         });
       }
       else if (this.matchDisplayVote(msg.content)){
-        const doc = await this.db.collection('app-data').doc('david-bot').get();
-        const { votes } = doc.data() as any;
-        msg.reply(`
+        if (this.db) {
+          const doc = await this.db.collection('app-data').doc('david-bot').get();
+          const { votes } = doc.data() as any;
+          msg.reply(`
 **The votes so far**
 
 David Eck: ${votes.eck}
 David Peace Cream: ${votes.peace}
-        `);
-      }
+          `);
+        }
+        }
     });
   }
 

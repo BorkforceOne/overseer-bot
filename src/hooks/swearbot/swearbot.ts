@@ -32,7 +32,7 @@ const goodEmoji = '🙏🏻';
  */
 export class SwearBotHook implements Hook {
   private readonly client: Client;
-  private readonly db: firestore.Firestore;
+  private readonly db: firestore.Firestore | null;
   private blacklist: string[] = [];
   private whitelist: string[] = [];
   private emojis: {[name: string]: Emoji} = {};
@@ -51,27 +51,29 @@ export class SwearBotHook implements Hook {
   }
 
   private async _init() {
-    let doc = await this.db.collection('app-data').doc(docId).get();
-    if (!doc.exists) {
-      await this.db.collection('app-data').doc(docId).create({
-        swears: {},
+    if (this.db) {
+      let doc = await this.db.collection('app-data').doc(docId).get();
+      if (!doc.exists) {
+        await this.db.collection('app-data').doc(docId).create({
+          swears: {},
+        });
+      }
+      await this.listService.list('swearsBlacklist');
+      await this.listService.list('swearsWhitelist');
+      this.listService.onSnapshot(l => {
+        const list = l.data.items.ids.map(id => l.data.items.byId[id].id);
+        switch (l.data.name) {
+          case 'swearsBlacklist': {
+            this.blacklist = list;
+            break;
+          }
+          case 'swearsWhitelist': {
+            this.whitelist = list;
+            break;
+          }
+        }
       });
     }
-    await this.listService.list('swearsBlacklist');
-    await this.listService.list('swearsWhitelist');
-    this.listService.onSnapshot(l => {
-      const list = l.data.items.ids.map(id => l.data.items.byId[id].id);
-      switch (l.data.name) {
-        case 'swearsBlacklist': {
-          this.blacklist = list;
-          break;
-        }
-        case 'swearsWhitelist': {
-          this.whitelist = list;
-          break;
-        }
-      }
-    });
   }
 
   public async init() {
@@ -80,12 +82,12 @@ export class SwearBotHook implements Hook {
     this.client.on('messageReactionAdd', async (reaction) => {
       const user = reaction.message.author.username;
       if (reaction.emoji.name === badEmoji) {
-        await this.db.collection('app-data')
+        await this.db?.collection('app-data')
           .doc(docId)
           .update({ [`swears.${user}`]: increment });
       }
       if (reaction.emoji.name === goodEmoji) {
-        await this.db.collection('app-data')
+        await this.db?.collection('app-data')
           .doc(docId)
           .update({ [`swears.${user}`]: decrement });
       }
@@ -110,14 +112,16 @@ export class SwearBotHook implements Hook {
         });
       }
       else if (this.matchDisplayVote(msg.content)){
-        const doc = await this.db.collection('app-data').doc(docId).get();
-        const { swears } = doc.data() as any;
-        msg.reply(`
+        if (this.db) {
+          const doc = await this.db.collection('app-data').doc(docId).get();
+          const { swears } = doc.data() as any;
+          msg.reply(`
 **The swears so far**
 ${Object.keys(swears)
   .sort((a, b) => swears[b] - swears[a])
   .map(u => `${u}: ${swears[u]}`).join('\n')}
 `);
+        }
       }
     });
   }

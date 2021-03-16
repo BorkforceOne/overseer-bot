@@ -8,23 +8,28 @@ type Firestore = firebase.firestore.Firestore;
 export class DataService {
   private _db?: Firestore;
 
-  get db(): Firestore {
-    return this._db || this.init();
+  get db(): Firestore | null {
+    return this._db ?? this.init() ?? null;
   }
 
-  init() {
-    let finalConfigLocation = config.firebaseSecretsPath;
-
-    if (!path.isAbsolute(config.firebaseSecretsPath)) {
-      finalConfigLocation = path.resolve(process.cwd(), config.firebaseSecretsPath);
+  init(): Firestore | null {
+    try {
+      let finalConfigLocation = config.firebaseSecretsPath;
+  
+      if (!path.isAbsolute(config.firebaseSecretsPath)) {
+        finalConfigLocation = path.resolve(process.cwd(), config.firebaseSecretsPath);
+      }
+  
+      const serviceAccount = require(finalConfigLocation);
+      firebase.initializeApp({
+        credential: firebase.credential.cert(serviceAccount),
+        databaseURL: "https://magic-overseer-bot.firebaseio.com"
+      });
+      this._db = firebase.firestore();
+      return this._db;
     }
-
-    const serviceAccount = require(finalConfigLocation);
-    firebase.initializeApp({
-      credential: firebase.credential.cert(serviceAccount),
-      databaseURL: "https://magic-overseer-bot.firebaseio.com"
-    });
-    this._db = firebase.firestore();
-    return this._db;
+    catch (e) {
+      return null;
+    }
   }
 }
