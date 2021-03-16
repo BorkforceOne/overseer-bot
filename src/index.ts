@@ -64,7 +64,7 @@ class Main {
         await this.discordService.start();
         await this.hooksService.start(ENABLED_HOOKS);
 
-        this.dataService.db.collection('app-data').onSnapshot(e => {
+        this.dataService.db?.collection('app-data').onSnapshot(e => {
             e.docs.forEach(d => console.log(d.data()));
         });
     }

@@ -21,7 +21,7 @@ const sortItems = (list: List) => {
 
 export class ListHook implements Hook {
   private readonly client: Client;
-  private readonly db: firestore.Firestore;
+  private readonly db: firestore.Firestore | null;
 
   constructor(
     private readonly discordService: DiscordService,
@@ -171,15 +171,16 @@ rm movies Boondock Saints
   
   private async update(id: string, list: List) {
     await this.list(id);
-    await this.db.collection(repo).doc(id).set(list.data);
+    await this.db?.collection(repo).doc(id).set(list.data);
   }
 
-  private async list(list: string): Promise<List> {
+  private async list(list: string): Promise<List | null> {
     return await this.listService.list(list);
   } 
 
   private async lists(): Promise<List[]> {
-    const e = await this.db.collection(repo).get();
+    const e = await this.db?.collection(repo).get();
+    if (!e) return [];
     return e.docs.map(doc => ({
       id: doc.id,
       data: doc.data() as any,
