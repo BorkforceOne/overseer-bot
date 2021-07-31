@@ -5,6 +5,8 @@ executors:
   docker-publisher:
     environment:
       IMAGE_NAME: bjg96/overseer-bot
+      QEMU_VERSION: 5.2.0-2
+      BUILDX_VERSION: 0.5.1
     docker:
       - image: circleci/buildpack-deps:stretch
 jobs:
@@ -17,8 +19,8 @@ jobs:
           command: |
               mkdir -p ~/.docker/cli-plugins
               baseUrl="https://github.com/docker/buildx/releases/download"
-              fileName="buildx-v<< parameters.version >>.linux-amd64"
-              url="${baseUrl}/v<< parameters.version >>/${fileName}"
+              fileName="buildx-v$BUILDX_VERSION.linux-amd64"
+              url="${baseUrl}/v$BUILDX_VERSION/${fileName}"
               curl -sSL -o ~/.docker/cli-plugins/docker-buildx $url
               chmod a+x ~/.docker/cli-plugins/docker-buildx
           name: Install Docker buildx
@@ -30,7 +32,7 @@ jobs:
           name: Initialize Docker buildx
       - run:
           command: |
-              docker run --rm --privileged multiarch/qemu-user-static:<< parameters.qemu-user-static-version >> --reset -p yes
+              docker run --rm --privileged multiarch/qemu-user-static:$QEMU_VERSION --reset -p yes
           name: Start multiarch/qemu-user-static container
       - run:
           command: docker rm -f buildx_buildkit_docker-multiarch0 || true
