@@ -46,10 +46,14 @@ workflows:
       - build:
           filters:
             branches:
-              only: master
+              only:
+                - master
+                - circleci-editor/master
       - publish-latest:
           requires:
             - build
           filters:
             branches:
-              only: master
+              only:
+                - master
+                - circleci-editor/master
