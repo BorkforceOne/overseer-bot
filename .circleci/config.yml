@@ -6,7 +6,7 @@ executors:
     environment:
       IMAGE_NAME: bjg96/overseer-bot
       QEMU_VERSION: 5.2.0-2
-      BUILDX_VERSION: 0.5.1
+      BUILDX_VERSION: 0.6.1
     docker:
       - image: circleci/buildpack-deps:stretch
 jobs:
