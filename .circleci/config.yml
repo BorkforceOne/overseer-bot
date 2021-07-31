@@ -17,6 +17,7 @@ jobs:
       - setup_remote_docker
       - run:
           command: |
+              apk add make curl
               mkdir -p ~/.docker/cli-plugins
               baseUrl="https://github.com/docker/buildx/releases/download"
               fileName="buildx-v$BUILDX_VERSION.linux-amd64"
