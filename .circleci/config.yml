@@ -12,8 +12,8 @@ jobs:
     executor: docker-publisher
     steps:
       - checkout
-      - docker-buildx/install
       - setup_remote_docker
+      - docker-buildx/install
       - run:
           name: Build Docker image
           command: |
