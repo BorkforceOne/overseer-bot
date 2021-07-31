@@ -1,7 +1,6 @@
 version: 2.1
 orbs:
   docker-buildx: sensu/docker-buildx@1.1.1
-
 executors:
   docker-publisher:
     environment:
