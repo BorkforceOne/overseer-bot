@@ -1,4 +1,4 @@
-import { Client, Role, MessageReaction, GuildMemberRoleManager, User, PartialUser } from 'discord.js';
+import { Client, Role, MessageReaction, GuildMemberRoleManager, User, PartialUser, DiscordAPIError } from 'discord.js';
 import { Hook } from '../../utils/hook';
 import { DiscordService } from '../../services/app/discord_service';
 
@@ -66,8 +66,8 @@ export class RoleBotHook implements Hook {
 async function getInfo(
     reaction: MessageReaction, 
     user: User | PartialUser, 
-    cb: (roles: GuildMemberRoleManager, role: Role) => void
-): Promise<string | 'success' | 'bot'> {
+    cb: (roles: GuildMemberRoleManager, role: Role) => Promise<any>
+): Promise<string | 'n/a' | 'success' | 'bot'> {
 
     if (user.bot) return 'bot';
 
@@ -81,7 +81,7 @@ async function getInfo(
     
     const match = REGEX.exec(message.content);
 
-    if (match === null) return `no match: ${message.content}`;
+    if (match === null) return 'n/a';
 
     const [_content, reactThisId, unicodeEmoji, roleId] = match;
 
@@ -101,7 +101,15 @@ async function getInfo(
     const member = guild.members.cache.array().find(meem => meem.id === user.id);
     if (!member) return `did not find member ${user.id}`;
 
-    cb(member.roles, role);
+    try {
+        await cb(member.roles, role);
+    }
+    catch (e) {
+        if (e instanceof DiscordAPIError)
+            return e.message;
+        return String(e);
+    }
+
     return 'success';
 }
 
@@ -109,10 +117,10 @@ async function getInfo(
 async function process(
     reaction: MessageReaction, 
     user: User | PartialUser, 
-    cb: (roles: GuildMemberRoleManager, role: Role) => void
+    cb: (roles: GuildMemberRoleManager, role: Role) => Promise<any>
 ) {
     const v = await getInfo(reaction, user, cb);
-    if (['success', 'bot'].includes(v) === false) {
+    if (['n/a', 'success', 'bot'].includes(v) === false) {
         reaction.remove();
         console.log(v);
     }
