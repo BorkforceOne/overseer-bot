@@ -9,6 +9,7 @@ import { SnapchatHook } from "./hooks/snapchat/snapchat";
 import { VersionHook } from "./hooks/version/version";
 import { WhatHook } from "./hooks/what/what";
 import { DadbotHook } from "./hooks/dadbot/dadbot";
+import { RoleBotHook } from "./hooks/rolebot/rolebot";
 
 import { FuckOffHook } from "./hooks/fuckoff/fuckoff";
 import { DiscordService } from "./services/app/discord_service";
@@ -49,6 +50,7 @@ export const ENABLED_HOOKS = [
     "infoHook",
     "listHook",
     "getHook",
+    "roleBotHook",
 ];
 
 class Main {
@@ -102,6 +104,7 @@ function registerServices() {
     ServiceRegistrySingleton.addService("infoHook", InfoHook);
     ServiceRegistrySingleton.addService("listHook", ListHook);
     ServiceRegistrySingleton.addService("getHook", GetHook);
+    ServiceRegistrySingleton.addService("roleBotHook", RoleBotHook);
 }
 
 registerServices();
