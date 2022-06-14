@@ -80,6 +80,8 @@ export class SwearBotHook implements Hook {
     await this._init();
 
     this.client.on('messageReactionAdd', async (reaction) => {
+      if (reaction.partial) return;  // it's a message that existed before this current process
+
       const user = reaction.message.author.username;
       if (reaction.emoji.name === badEmoji) {
         await this.db?.collection('app-data')
