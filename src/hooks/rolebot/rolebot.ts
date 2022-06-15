@@ -1,4 +1,4 @@
-import { Client, Role, MessageReaction, GuildMemberRoleManager, User, PartialUser } from 'discord.js';
+import { Client, Role, MessageReaction, GuildMemberRoleManager, User, PartialUser, DiscordAPIError, Message, PartialMessage } from 'discord.js';
 import { Hook } from '../../utils/hook';
 import { DiscordService } from '../../services/app/discord_service';
 
@@ -31,26 +31,26 @@ export class RoleBotHook implements Hook {
         });
 
         client.on('message', async (msg) => {
+            if (!await canMessageAuthorAssignRole(msg)) return;
+
             const match = REGEX.exec(msg.content);
         
-            if (match === null) return `no match: ${msg.content}`;
+            if (match === null) return;
             const [_content, reactThisId, unicodeEmoji, roleId] = match;
-
-            // const roleName = (await msg.guild?.roles.fetch(roleId))?.name;
             
             if (unicodeEmoji) {
-                console.log(`New role message for role ${roleId}: ${unicodeEmoji}`);
+                // console.log(`New role message for role ${roleId}: ${unicodeEmoji}`);
                 msg.react(unicodeEmoji.trim());
             }
             else {
-                console.log(`New role message for role ${roleId}: ${reactThisId}`);
+                // console.log(`New role message for role ${roleId}: ${reactThisId}`);
                 // use .find() to call the discord api to fetch all emojis
                 const guildEmoji = msg.guild?.emojis.cache.find(em => em.name === reactThisId);
                 if (guildEmoji) {
                     msg.react(guildEmoji);
                 }
                 else {
-                    msg.reply(`emoji :${reactThisId}: could not be found in this server, please use a different emoji`);
+                    msg.reply(`emoji :${reactThisId}: could not be found in this server, please delete your message and try again with a different emoji`);
                 }
             }
         });
@@ -63,11 +63,53 @@ export class RoleBotHook implements Hook {
     }
 }
 
+async function canMessageAuthorAssignRole(message: Message | PartialMessage) {
+    if (message.partial) {
+        // if this message was created before this current process, it will only be partially cached.
+        // this message will probably always be an uncached message, so we need to get the full version from the api.
+        message = await message.fetch();
+    }
+
+    const match = REGEX.exec(message.content);
+
+    if (match === null) return false;
+    const [_content, _reactThisId, _unicodeEmoji, roleId] = match;
+
+    const role = await message.guild?.roles.fetch(roleId);
+    const user = message.author;
+    const member = message.guild?.members.cache.find(meem => meem.user.id === user.id);
+
+    if (!role) {
+        // console.log('no role');
+        return false;
+    }
+    if (!member) {
+        // console.log('no member');
+        return false;
+    }
+
+    const compare = member.roles.highest?.comparePositionTo(role);
+    if (compare === undefined || compare <= 0) {
+        // console.log(`${role.name} >= ${member?.roles.highest?.name}: ${compare}`);
+        return false;
+    }
+
+    if (!member.hasPermission('MANAGE_ROLES', {
+        checkAdmin: true,
+        checkOwner: true,
+    })) {
+        // console.log(`${member.user.username} does not have MANAGE_ROLES`);
+        return false;
+    }
+
+    return true;
+}
+
 async function getInfo(
     reaction: MessageReaction, 
     user: User | PartialUser, 
-    cb: (roles: GuildMemberRoleManager, role: Role) => void
-): Promise<string | 'success' | 'bot'> {
+    cb: (roles: GuildMemberRoleManager, role: Role) => Promise<any>
+): Promise<string | 'n/a' | 'success' | 'bot'> {
 
     if (user.bot) return 'bot';
 
@@ -81,7 +123,9 @@ async function getInfo(
     
     const match = REGEX.exec(message.content);
 
-    if (match === null) return `no match: ${message.content}`;
+    if (match === null) return 'n/a';
+
+    if (!await canMessageAuthorAssignRole(message)) return 'author cannot assign role';
 
     const [_content, reactThisId, unicodeEmoji, roleId] = match;
 
@@ -101,7 +145,15 @@ async function getInfo(
     const member = guild.members.cache.array().find(meem => meem.id === user.id);
     if (!member) return `did not find member ${user.id}`;
 
-    cb(member.roles, role);
+    try {
+        await cb(member.roles, role);
+    }
+    catch (e) {
+        if (e instanceof DiscordAPIError)
+            return e.message;
+        return String(e);
+    }
+
     return 'success';
 }
 
@@ -109,10 +161,10 @@ async function getInfo(
 async function process(
     reaction: MessageReaction, 
     user: User | PartialUser, 
-    cb: (roles: GuildMemberRoleManager, role: Role) => void
+    cb: (roles: GuildMemberRoleManager, role: Role) => Promise<any>
 ) {
     const v = await getInfo(reaction, user, cb);
-    if (['success', 'bot'].includes(v) === false) {
+    if (['n/a', 'success', 'bot'].includes(v) === false) {
         reaction.remove();
         console.log(v);
     }
