@@ -8,7 +8,7 @@ react with :CelestiaFire: to get the role @testRole2
 react with 👍 to get the role @testRole1
 
 */
-const REGEX = /^react with ?(?:<:([^:]+):\d+>|(\S{1,4})) ?to get the role ?<@&(\d+)>$/i;
+const REGEX = /^react with ?(?:<:([^:]+):\d+>|(\S{1,4})) ?to get the role ?<@&(\d+)>/i;
 
 export class RoleBotHook implements Hook {
     private readonly client: Client;
@@ -80,17 +80,17 @@ async function canMessageAuthorAssignRole(message: Message | PartialMessage) {
     const member = message.guild?.members.cache.find(meem => meem.user.id === user.id);
 
     if (!role) {
-        // console.log('no role');
+        console.log('rolebot: canMessageAuthorAssignRole: no role');
         return false;
     }
     if (!member) {
-        // console.log('no member');
+        console.log('rolebot: canMessageAuthorAssignRole: no member');
         return false;
     }
 
     const compare = member.roles.highest?.comparePositionTo(role);
     if (compare === undefined || compare <= 0) {
-        // console.log(`${role.name} >= ${member?.roles.highest?.name}: ${compare}`);
+        console.log(`rolebot: canMessageAuthorAssignRole: ${role.name} >= ${member?.roles.highest?.name}: ${compare}`);
         return false;
     }
 
@@ -98,7 +98,7 @@ async function canMessageAuthorAssignRole(message: Message | PartialMessage) {
         checkAdmin: true,
         checkOwner: true,
     })) {
-        // console.log(`${member.user.username} does not have MANAGE_ROLES`);
+        console.log(`rolebot: canMessageAuthorAssignRole: ${member.user.username} does not have MANAGE_ROLES`);
         return false;
     }
 
@@ -157,6 +157,12 @@ async function getInfo(
     return 'success';
 }
 
+async function removeReaction(reaction: MessageReaction, user: User | PartialUser) {
+    for (const r of reaction.message.reactions.cache.values()) {
+        await r.users.remove(user.id);
+    }
+}
+
 
 async function process(
     reaction: MessageReaction, 
@@ -165,7 +171,7 @@ async function process(
 ) {
     const v = await getInfo(reaction, user, cb);
     if (['n/a', 'success', 'bot'].includes(v) === false) {
-        reaction.remove();
-        console.log(v);
+        await removeReaction(reaction, user);
+        console.log(`rolebot: ${v}`);
     }
 }
