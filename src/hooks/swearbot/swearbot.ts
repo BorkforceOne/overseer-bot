@@ -82,7 +82,7 @@ export class SwearBotHook implements Hook {
     this.client.on('messageReactionAdd', async (reaction) => {
       if (reaction.partial) return;  // it's a message that existed before this current process
 
-      const user = reaction.message.author.username;
+      const user = reaction.message.author.id;
       if (reaction.emoji.name === badEmoji) {
         await this.db?.collection('app-data')
           .doc(docId)
@@ -117,15 +117,34 @@ export class SwearBotHook implements Hook {
         if (this.db) {
           const doc = await this.db.collection('app-data').doc(docId).get();
           const { swears } = doc.data() as any;
+          const formattedSwears = this.resolveSwearers(swears);
           msg.reply(`
 **The swears so far**
-${Object.keys(swears)
-  .sort((a, b) => swears[b] - swears[a])
-  .map(u => `${u}: ${swears[u]}`).join('\n')}
+${Object.keys(formattedSwears)
+  .sort((a, b) => formattedSwears[b] - formattedSwears[a])
+  .map(u => `${u}: ${formattedSwears[u]}`).join('\n')}
 `);
         }
       }
     });
+  }
+
+  private resolveSwearers(rawSwears: Record<string, number>): Record<string, number> {
+    const formattedSwears: Record<string, number> = {};
+
+    Object.keys(rawSwears).forEach((userKey) => {
+      const resolvedUser = this.client.users.resolve(userKey);
+      const username = (resolvedUser) ? resolvedUser.username : userKey;
+      const swears = rawSwears[userKey];
+
+      if (formattedSwears.hasOwnProperty(username)) {
+        formattedSwears[username] += swears;
+      } else {
+        formattedSwears[username] = swears;
+      }
+    });
+
+    return formattedSwears;
   }
 
   public matchGood(_msg: string): boolean {
