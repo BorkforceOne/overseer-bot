@@ -12,4 +12,4 @@ npm run debug
 Check the pinned messages to get the proper secrets.
 
 ## Builds
-See builds here: https://hub.docker.com/r/bjg96/overseer-bot/builds
+See builds here: https://github.com/BorkforceOne/overseer-bot/pkgs/container/overseer-bot
