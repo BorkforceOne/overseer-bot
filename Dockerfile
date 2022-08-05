@@ -1,5 +1,5 @@
 # Specify the node base image
-FROM node:10-slim
+FROM node:14-slim
 
 # Create app directory
 WORKDIR /usr/app
