@@ -1,6 +1,8 @@
 import axios from "axios";
 import { Client, Message, MessageAttachment, MessageEmbed } from "discord.js";
 import { DiscordService } from "../../services/app/discord_service";
+import { AndThrottleStrategyService } from "../../services/throttle/andThrottleStrategy.service";
+import { RandomThrottleStrategyService } from "../../services/throttle/randomThrottleStrategy.service";
 import { throttle } from "../../services/throttle/throttle";
 import { TimeThrottleStrategyService } from "../../services/throttle/timeThrottleStrategy.service";
 import { Hook } from "../../utils/hook";
@@ -9,12 +11,44 @@ const DURATION_BEFORE_FIRING_AGAIN_MS = 10 * 60 * 1000; // 10 minutes
 
 const endpoint = "https://backend.craiyon.com/generate";
 
+interface FireParams {
+  prompt: string;
+  msg: Message;
+}
+
 export class ImagineHook implements Hook {
   private readonly client: Client;
+
+  private readonly throttledReply = throttle({
+    fire: this.reply,
+    throttleStrategies: [
+      this.timeThrottleStrategyService.getStrategy({
+        durationBeforeFiringAgainMs: DURATION_BEFORE_FIRING_AGAIN_MS
+      }),
+    ],
+  });
+
+  private readonly randomReply = throttle({
+    fire: this.reply,
+    throttleStrategies: [
+      this.andThrottleStrategyService.getStrategy({
+        throttles: [
+          this.randomThrottleStrategyService.getStrategy({
+            chance: 1 / 200,
+          }),
+          this.timeThrottleStrategyService.getStrategy({
+            durationBeforeFiringAgainMs: DURATION_BEFORE_FIRING_AGAIN_MS
+          }),
+        ],
+      })
+    ],
+  });
 
   constructor(
     private readonly discordService: DiscordService,
     private readonly timeThrottleStrategyService: TimeThrottleStrategyService,
+    private readonly randomThrottleStrategyService: RandomThrottleStrategyService,
+    private readonly andThrottleStrategyService: AndThrottleStrategyService<FireParams>,
   ) {
     this.client = this.discordService.getClient();
   }
@@ -22,32 +56,23 @@ export class ImagineHook implements Hook {
   public async init() {
     const { client } = this;
 
-    const throttledReply = throttle({
-      fire: this.reply,
-      throttleStrategies: [
-        this.timeThrottleStrategyService.getStrategy({
-          durationBeforeFiringAgainMs: DURATION_BEFORE_FIRING_AGAIN_MS
-        }),
-      ],
-    });
-
     client.on("message", async (msg) => {
       if (msg.member?.user?.bot !== false) {
         return;
       }
-      
+
       const instruction = match(msg.content);
 
-      if (!instruction)
+      if (!instruction) {
+        this.randomReply({prompt: msg.content, msg});
         return;
-
-      throttledReply({instruction, msg});
+      }
+  
+      this.throttledReply({prompt: instruction.prompt, msg});  
     });
   }
-
-  public async reply({instruction, msg}: {instruction: Instruction, msg: Message}) {
-    const { prompt } = instruction;
-
+  
+  public async reply({prompt, msg}: {prompt: string, msg: Message}) {
     console.log(`Requesting prompt: '${prompt}'`);
 
     msg.channel.startTyping();
