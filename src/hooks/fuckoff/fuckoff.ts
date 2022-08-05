@@ -1,4 +1,4 @@
-import { Client } from "discord.js";
+import { ChannelType, Client } from "discord.js";
 import { DiscordService } from "../../services/app/discord_service";
 import { OnOffOpts } from "../../services/throttle/fuckOffThrottleStrategy.service";
 import { Hook } from "../../utils/hook";
@@ -55,8 +55,8 @@ export class FuckOffHook implements Hook {
   }
 
   public async init() {
-    this.client.on("message", (msg) => {
-      if (msg.channel.type !== "text") {
+    this.client.on("messageCreate", (msg) => {
+      if (msg.channel.type !== ChannelType.GuildText) {
         return;
       }
       if (msg.author.bot === true) {

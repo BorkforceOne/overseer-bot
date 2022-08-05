@@ -1,5 +1,5 @@
 import { Hook } from '../../utils/hook';
-import { TextChannel, Client } from 'discord.js';
+import { TextChannel, Client, MessageType, ChannelType } from 'discord.js';
 import { DiscordService } from '../../services/app/discord_service';
 
 export class SnapchatHook implements Hook {
@@ -12,8 +12,8 @@ export class SnapchatHook implements Hook {
   async init() {
     const { client } = this;
 
-    client.on('message', (msg) => {
-      if (msg.channel.type !== 'text')
+    client.on('messageCreate', (msg) => {
+      if (msg.channel.type !== ChannelType.GuildText)
         return;
 
       const channel = msg.channel as TextChannel;
@@ -27,7 +27,9 @@ export class SnapchatHook implements Hook {
         return;
 
       // delete after five minutes
-      msg.delete({ timeout: 1000 * 60 * 5 });
+      setTimeout(() => {
+        msg.delete();
+      }, 1000 * 60 * 5);
     });
   }
 }

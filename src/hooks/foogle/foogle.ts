@@ -37,9 +37,11 @@ export class FoogleHook implements Hook {
     const encodedURI = encodeURIComponent(toEncode);
     const response = responses[Math.floor(Math.random() * responses.length)];
     message.reply({
-      embed: {
-        description: `[${response}](${lmgtfyTemplate}${encodedURI})`,
-      },
+      embeds: [
+        {
+          description: `[${response}](${lmgtfyTemplate}${encodedURI})`,
+        },
+      ],
     });
   }
 
@@ -56,7 +58,7 @@ export class FoogleHook implements Hook {
       ],
     });
 
-    client.on("message", (message) => {
+    client.on("messageCreate", (message) => {
       if (message.content.indexOf(hotword) === 0) {
         throttledFire({ message });
       }

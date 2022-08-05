@@ -1,4 +1,4 @@
-import { Client, MessageEmbed } from "discord.js";
+import { APIEmbedField, Client, EmbedBuilder } from "discord.js";
 import { DiscordService } from "../../services/app/discord_service";
 import { Hook } from "../../utils/hook";
 import { ENABLED_HOOKS } from "../..";
@@ -56,7 +56,7 @@ export class InfoHook implements Hook {
   public async init() {
     const { client } = this;
 
-    client.on("message", async (msg) => {
+    client.on("messageCreate", async (msg) => {
 
       if (msg.member?.user?.bot !== false) {
         return;
@@ -64,49 +64,69 @@ export class InfoHook implements Hook {
 
       if (this.matchHook(msg.content)) {
         const meta = getHookMeta(msg.content);
-        if (!meta)
-          return msg.reply('Hook not found');
+        if (!meta) {
+          msg.reply('Hook not found');
+          return;
+        }
         const { hookname, url, contentsPath, hook } = meta;
-        const resp = new MessageEmbed()
+        const resp = new EmbedBuilder()
           .setAuthor(
-            client.user?.username,
-            client.user?.avatarURL() ?? undefined,
+            {
+              name: client.user?.username ?? '',
+              iconURL: client.user?.avatarURL() ?? undefined,
+            }
           )
           .setTitle(hookname)
           .setDescription(`Here is info on ${hookname}.`)
           .setURL(url)
-          .addField('Source', url)
-          .addField('Code Preview', `Type \`code ${hook}\`.`)
-          .setColor(0x00AE86)
-          .attachFiles([contentsPath])
-        ;
-        return msg.reply(resp);
+          .addFields([
+            {name: 'Source', value: url},
+            {name: 'Code Preview', value: `Type \`code ${hook}\`.`},
+          ])
+          .setColor(0x00AE86);
+        msg.reply({
+          embeds: [resp],
+        });
+        return;
       }
 
       if (this.matchSource(msg.content)) {
         const meta = getHookMeta(msg.content);
-        if (!meta)
-          return msg.reply('Hook not found');
+        if (!meta) {
+          msg.reply('Hook not found');
+          return;
+        }
         const { code} = meta;
-        return msg.reply(code);
+        msg.reply(code);
+        return;
       }
 
       if (this.match(msg.content)) {
-        const resp = new MessageEmbed()
+        const resp = new EmbedBuilder()
           .setAuthor(
-            client.user?.username,
-            client.user?.avatarURL() ?? undefined,
+            {
+              name: client.user?.username ?? "",
+              iconURL: client.user?.avatarURL() ?? undefined,
+            }
           )
           .setColor(0x00AE86)
           .setDescription('You asked for info on Overseer. Here are the registered hooks. Type `hook 0` or `hook acromean` to see more info on that hook.')
         ;
+        const hooks: APIEmbedField[] = [];
         ENABLED_HOOKS.forEach((h, i) => {
           const hookname = h.toLowerCase().split('hook')[0];
-          resp.addField(i, hookname, true)
+          hooks.push({
+            name: `${i}`,
+            value: hookname,
+            inline: true,
+          });
         });
-        return msg.reply(resp);
+        resp.addFields(hooks);
+        msg.reply({
+          embeds: [resp],
+        });
+        return;
       } 
-
     });
   }
 

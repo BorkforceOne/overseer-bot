@@ -69,7 +69,7 @@ export class BogoVotoHook implements Hook {
   async init() {
     const { client } = this;
 
-    client.on('message', (msg) => {
+    client.on('messageCreate', (msg) => {
       const split = msg.content.split(' ');
 
       const command = split[0];

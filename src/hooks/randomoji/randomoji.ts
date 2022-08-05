@@ -237,7 +237,7 @@ export class RandomojiHook implements Hook {
     });
 
 
-    this.client.on('message', (message) => {
+    this.client.on('messageCreate', (message) => {
       react(message);
     });
   }

@@ -82,7 +82,9 @@ export class SwearBotHook implements Hook {
     this.client.on('messageReactionAdd', async (reaction) => {
       if (reaction.partial) return;  // it's a message that existed before this current process
 
-      const user = reaction.message.author.id;
+      const user = reaction.message.author?.id;
+      if (!user) return;
+
       if (reaction.emoji.name === badEmoji) {
         await this.db?.collection('app-data')
           .doc(docId)
@@ -95,7 +97,7 @@ export class SwearBotHook implements Hook {
       }
     });
 
-    this.client.on("message", async (msg) => {
+    this.client.on("messageCreate", async (msg) => {
 
       if (msg.member?.user?.bot !== false) {
         return;

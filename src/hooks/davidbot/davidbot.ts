@@ -74,7 +74,7 @@ export class DavidBotHook implements Hook {
       }
     });
 
-    this.client.on("message", async (msg) => {
+    this.client.on("messageCreate", async (msg) => {
 
       if (this.matchEck(msg.content)) {
         this.react({

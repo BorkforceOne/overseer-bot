@@ -17,7 +17,7 @@ export class GetHook implements Hook {
   public async init() {
     const { client } = this;
 
-    client.on("message", async (msg) => {
+    client.on("messageCreate", async (msg) => {
 
       if (msg.member?.user?.bot !== false) {
         return;
@@ -38,12 +38,13 @@ export class GetHook implements Hook {
           const img = imgs[0];
           const src = img.attribs['src'];
           const [title] = $("title").text().split('-');
-          return msg.reply({
-            embed: {
+          msg.reply({
+            embeds: [{
               title,
               image: { url: src }
-            },
+            }],
           });
+          return;
         }
       }
     });

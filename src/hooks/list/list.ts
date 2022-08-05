@@ -1,4 +1,4 @@
-import { Client, MessageEmbed } from "discord.js";
+import { APIEmbedField, Client, EmbedBuilder } from "discord.js";
 import { DiscordService } from "../../services/app/discord_service";
 import { Hook } from "../../utils/hook";
 import { firestore } from "firebase-admin";
@@ -35,7 +35,7 @@ export class ListHook implements Hook {
   public async init() {
     const { client } = this;
 
-    client.on("message", async (msg) => {
+    client.on("messageCreate", async (msg) => {
 
       if (msg.member?.user?.bot !== false) {
         return;
@@ -50,16 +50,21 @@ export class ListHook implements Hook {
         case 'touch': {
           const { payload } = instruction;
           const list = await this.list(payload.list); 
-          if (!list)
-            return `create list ${payload.list} failed.`;
+          if (!list) {
+            msg.reply(`create list ${payload.list} failed.`);
+            return;
+          }
 
-          return msg.reply(`created list: ${list.data.name}`);
+          msg.reply(`created list: ${list.data.name}`);
+          return;
         }
         case 'add': {
           const { payload } = instruction;
           const list = await this.list(payload.list); 
-          if (!list)
-            return `add ${payload.item} to list ${payload.list} failed.`;
+          if (!list) {
+            msg.reply(`add ${payload.item} to list ${payload.list} failed.`);
+            return;
+          }
           
           list.data.items.ids.push(payload.item);
           list.data.items.byId[payload.item] = {
@@ -69,20 +74,24 @@ export class ListHook implements Hook {
           };
           await this.update(payload.list, list);
 
-          return msg.reply(`added ${payload.item} to list: ${list.data.name}`);
+          msg.reply(`added ${payload.item} to list: ${list.data.name}`);
+          return;
         }
         case 'rm': {
           const { payload } = instruction;
           const list = await this.list(payload.list); 
-          if (!list)
-            return `remove ${payload.item} to list ${payload.list} failed.`;
+          if (!list) {
+            msg.reply(`remove ${payload.item} to list ${payload.list} failed.`);
+            return;
+          }
           
           list.data.items.ids = list.data.items.ids
             .filter(i => i !== payload.item);
           delete list.data.items.byId[payload.item];
           await this.update(payload.list, list);
 
-          return msg.reply(`removed ${payload.item} from list: ${list.data.name}`);
+          msg.reply(`removed ${payload.item} from list: ${list.data.name}`);
+          return;
         }
         case '-1':
         case '+1': {
@@ -91,16 +100,22 @@ export class ListHook implements Hook {
           const remove = upvote ? 'downvoters' : 'upvoters';
           const add = !upvote ? 'downvoters' : 'upvoters';
           const list = await this.list(payload.list); 
-          if (!list)
-            return `+1 ${payload.item} to list ${payload.list} failed.`;
+          if (!list) {
+            msg.reply(`+1 ${payload.item} to list ${payload.list} failed.`);
+            return;
+          }
           
           const itemId = list.data.items.ids
             .find(i => i === payload.item);
-          if (!itemId)
-            return `+1 ${payload.item} to list ${payload.list} failed.`;
+          if (!itemId) {
+            msg.reply(`+1 ${payload.item} to list ${payload.list} failed.`);
+            return;
+          }
           const item = list.data.items.byId[itemId];
-          if (item[add].some(d => d === msg.author.username))
-            return msg.reply(`you already ${action}'d ${payload.item} in list: ${list.data.name}`);
+          if (item[add].some(d => d === msg.author.username)) {
+            msg.reply(`you already ${action}'d ${payload.item} in list: ${list.data.name}`);
+            return;
+          }
           if (item[remove].some(d => d === msg.author.username)) {
             item[remove] = item[remove]
               .filter(d => d !== msg.author.username);
@@ -110,30 +125,41 @@ export class ListHook implements Hook {
 
           await this.update(payload.list, list);
 
-          return msg.reply(`${action}'d ${payload.item} in list: ${list.data.name}`);
+          msg.reply(`${action}'d ${payload.item} in list: ${list.data.name}`);
+          return;
         }
         case 'ls': {
           const { payload } = instruction;
           const list = await this.list(payload.list);
-          if (!list)
-            return `listing ${payload.list} failed.`;
-          const resp = new MessageEmbed()
+          if (!list) {
+            msg.reply(`listing ${payload.list} failed.`);
+            return;
+          }
+          const resp = new EmbedBuilder()
             .setAuthor(
-              client.user?.username,
-              client.user?.avatarURL() ?? undefined,
+              {
+                name: client.user?.username ?? "",
+                iconURL: client.user?.avatarURL() ?? undefined,
+              }
             )
-            .setTitle(payload.list)
-            ;
+            .setTitle(payload.list);
+          const fields: APIEmbedField[] = [];
           const items = list.data.items.ids
             .map(id => list.data.items.byId[id])
             .sort(compareItems)
             .map(i => `${i.upvoters.length - i.downvoters.length}: ${i.id}`)
             .join('\n') || 'None';
-          resp.addField('Items', items);
-          return msg.reply(resp);
+            
+          resp.addFields([
+            {name: 'Items', value: items},
+          ]);
+          msg.reply({
+            embeds: [resp],
+          });
+          return;
         }
         case 'help': {
-          return msg.reply(`
+          msg.reply(`
 \`list\` bot lets you keep track and vote on items in a list.
 
 Example usage:
@@ -148,20 +174,26 @@ rm movies Boondock Saints
 \`\`\`
           `);
         }
+        return;
         case 'ls .': {
           const lists = await this.lists();
           const m = lists
-            .map(l => `${l.data.name}: ${sortItems(l).slice(0, 10).join(', ')}`)
+            .map(l => `${l.data.name}: ${l.data.items.ids.length}`)
             .join('\n') || 'None';
-          const resp = new MessageEmbed()
+            console.log(m);
+          const resp = new EmbedBuilder()
             .setAuthor(
-              client.user?.username,
-              client.user?.avatarURL() ?? undefined,
+              {
+                name: client.user?.username ?? '',
+                iconURL: client.user?.avatarURL() ?? undefined,
+              }
             )
             .setTitle('Lists')
-            .setDescription(m)
-            ;
-          return msg.reply(resp);
+            .setDescription(m.substring(0, 4096));
+          msg.reply({
+            embeds: [resp],
+          });
+          return;
         }
         default:
           const _exhaustiveSwitch: never = instruction;

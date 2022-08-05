@@ -1,4 +1,4 @@
-import { Client, Message } from 'discord.js';
+import { Client, Message, TextChannel } from 'discord.js';
 import { Hook } from '../../utils/hook';
 import { DiscordService } from '../../services/app/discord_service';
 
@@ -19,13 +19,13 @@ export class FeedMeWordsHook implements Hook {
 
 
     async init() {
-        this.client.on('message', async (message) => {
+        this.client.on('messageCreate', async (message) => {
 
             const match = REGEX.exec(message.content);
 
             if (match) {
                 const mentionedUserId = match[1];
-                const mentionedUser = await message.client.users.fetch(mentionedUserId, true);
+                const mentionedUser = await message.client.users.fetch(mentionedUserId, {cache: true, force: true});
                 if (mentionedUser && mentionedUser.bot) {
                     // OK
                     let mentionedChannelId: string | undefined = match[2];
@@ -44,12 +44,11 @@ export class FeedMeWordsHook implements Hook {
                         const intendedMessage = match[3];
 
                         try {
-                            mentionedChannel.channel.startTyping();
-
+                            const channel = mentionedChannel.channel as TextChannel;
+                            channel.sendTyping();
     
                             setTimeout(() => {
-                                mentionedChannel!.channel.send(intendedMessage.trim());
-                                mentionedChannel!.channel.stopTyping(true);
+                              channel.send(intendedMessage.trim());
                             }, 1000);
                         }
                         finally {

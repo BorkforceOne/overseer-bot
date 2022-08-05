@@ -1,4 +1,4 @@
-import { Client, Message } from "discord.js";
+import { Client, Message, ChannelType } from "discord.js";
 import { DiscordService } from "../../services/app/discord_service";
 import { AndThrottleStrategyService } from "../../services/throttle/andThrottleStrategy.service";
 import { CountThrottleStrategyService } from "../../services/throttle/countThrottleStrategy.service";
@@ -94,9 +94,9 @@ export class ReplybotHook implements Hook {
             }
         );
 
-        client.on("message", (message: Message) => {
+        client.on("messageCreate", (message: Message) => {
 
-            if (message.channel.type !== "text") {
+            if (message.channel.type !== ChannelType.GuildText) {
                 return;
             }
             if (message.member?.user?.bot !== false) {

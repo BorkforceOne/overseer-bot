@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Client, Message } from "discord.js";
+import { ChannelType, Client, Message, TextChannel } from "discord.js";
 
 import { DiscordService } from "../../services/app/discord_service";
 import { AndThrottleStrategyService } from "../../services/throttle/andThrottleStrategy.service";
@@ -68,8 +68,8 @@ export class AcromeanHook implements Hook {
       ],
     });
 
-    client.on("message", (message) => {
-      if (message.channel.type === "text") {
+    client.on("messageCreate", (message) => {
+      if (message.channel.type === ChannelType.GuildText) {
         if (message.member?.user?.bot === false) {
           let timesRan = 0;
           const splits = message.content.split(" ");
@@ -109,7 +109,8 @@ export class AcromeanHook implements Hook {
         const filtered = (data as any[]).filter(d => d.tags && d.tags.indexOf(type) > -1);
         finalWords.push(sentenceCase(choose<any>(filtered).word));
       }
-      message.channel.send(`${acro} (${finalWords.join(" ")})`);
+      const channel = message.channel as TextChannel;
+      channel.send(`${acro} (${finalWords.join(" ")})`);
     });
   }
 }

@@ -12,7 +12,7 @@ export class InnovateHook implements Hook {
 
   public async init() {
 
-    this.client.on("message", (msg) => {
+    this.client.on("messageCreate", (msg) => {
 
       if (msg.member?.user?.bot !== false) {
         return;

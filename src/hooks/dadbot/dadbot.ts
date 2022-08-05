@@ -1,4 +1,4 @@
-import { Client, Message } from "discord.js";
+import { ChannelType, Client, Message } from "discord.js";
 import { DiscordService } from "../../services/app/discord_service";
 import { AndThrottleStrategyService } from "../../services/throttle/andThrottleStrategy.service";
 import { FuckOffThrottleStrategyService } from "../../services/throttle/fuckOffThrottleStrategy.service";
@@ -73,9 +73,9 @@ export class DadbotHook implements Hook {
         });
 
 
-        client.on("message", (message: Message) => {
+        client.on("messageCreate", (message: Message) => {
 
-            if (message.channel.type !== "text") {
+            if (message.channel.type !== ChannelType.GuildText) {
                 return;
             }
             if (message.member?.user?.bot !== false) {

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Client, Message, MessageAttachment, MessageEmbed } from "discord.js";
+import { Client, Message, AttachmentBuilder, EmbedBuilder } from "discord.js";
 import { DiscordService } from "../../services/app/discord_service";
 import { AndThrottleStrategyService } from "../../services/throttle/andThrottleStrategy.service";
 import { RandomThrottleStrategyService } from "../../services/throttle/randomThrottleStrategy.service";
@@ -56,7 +56,8 @@ export class ImagineHook implements Hook {
   public async init() {
     const { client } = this;
 
-    client.on("message", async (msg) => {
+    client.on("messageCreate", async (msg) => {
+      console.log(msg);
       if (msg.member?.user?.bot !== false) {
         return;
       }
@@ -75,11 +76,9 @@ export class ImagineHook implements Hook {
   public async reply({prompt, msg}: {prompt: string, msg: Message}) {
     console.log(`Requesting prompt: '${prompt}'`);
 
-    msg.channel.startTyping();
+    msg.reply('Hmmm...');
     const res = await axios.post(endpoint, {
       prompt,
-    }).finally(() => {
-      msg.channel.stopTyping();
     });
 
     if (res.status !== 200) {
@@ -87,15 +86,28 @@ export class ImagineHook implements Hook {
     }
 
     const images = res.data.images as string[];
-    const image = images[0];
-    const bufferedImage = Buffer.from(image, 'base64');
-    const attachment = new MessageAttachment(bufferedImage, "imagine.png");
-    const embed = new MessageEmbed();
-    embed.setTitle(`Imagining ${prompt}...`);
-    embed.setImage("attachment://imagine.png");
+    const embeds: EmbedBuilder[] = [];
+    const attachments: AttachmentBuilder[] = [];
+    for (let i = 0; i < images.length; i ++) {
+      const bufferedImage = Buffer.from(images[i], 'base64');
+      const attachment = new AttachmentBuilder(bufferedImage)
+                        .setName(`imagine${i}.png`);
+      embeds.push(
+        new EmbedBuilder()
+        .setImage(`attachment://imagine${i}.png`)
+        .setURL("https://www.craiyon.com/")
+      );
+      attachments.push(attachment);
+    }
+    embeds[0]
+    .setTitle(`Imagining ${prompt}...`)
+    .setDescription('...')
+    .setFooter({
+      text: 'Brought to you buy craiyon',
+    });
     return msg.reply({
-      embed,
-      files: [attachment],
+      embeds,
+      files: attachments,
     });
   }
 } 

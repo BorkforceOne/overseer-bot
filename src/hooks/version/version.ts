@@ -1,4 +1,4 @@
-import { Client, MessageEmbed } from 'discord.js';
+import { Client, EmbedBuilder } from 'discord.js';
 
 import { DiscordService } from '../../services/app/discord_service';
 import { Hook } from '../../utils/hook';
@@ -19,7 +19,7 @@ export class VersionHook implements Hook {
       console.log(`Running version (${process.env.npm_package_version} - ${process.env.SOURCE_COMMIT})`);
     });
 
-    client.on("message", async (msg) => {
+    client.on("messageCreate", async (msg) => {
       if (msg.content === "/version") {
         const baseUrl = 'https://github.com/bjg96/overseer-bot/'; // TODO use a process env?
         const commitHash = process.env.SOURCE_COMMIT;
@@ -31,11 +31,13 @@ export class VersionHook implements Hook {
         const $ = cheerio.load(res.data);
         const title = $("title").text();
 
-        const resp = new MessageEmbed()
+        const resp = new EmbedBuilder()
           .setTitle(title)
           .setAuthor(
-            client.user?.username,
-            client.user?.avatarURL() ?? undefined,
+            {
+              name: client.user?.username ?? '',
+              iconURL: client.user?.avatarURL() ?? undefined,
+            }
           )
           .setColor(0x00AE86)
           .setDescription(
@@ -44,7 +46,9 @@ export class VersionHook implements Hook {
             : 
             `Version ${version}`
           );
-        msg.reply(resp);
+        msg.reply({
+          embeds: [resp],
+        });
       }
     });
   }

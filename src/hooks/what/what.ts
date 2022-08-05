@@ -1,6 +1,6 @@
 import { Hook } from '../../utils/hook';
 import { DiscordService } from '../../services/app/discord_service';
-import { Client } from 'discord.js';
+import { ChannelType, Client } from 'discord.js';
 
 const CACHE: any = {};
 
@@ -14,8 +14,8 @@ export class WhatHook implements Hook {
   async init() {
     const { client } = this;
 
-    client.on("message", (msg) => {
-      if (msg.channel.type === 'text') {
+    client.on("messageCreate", (msg) => {
+      if (msg.channel.type === ChannelType.GuildText) {
         if (msg.member?.user?.bot !== false) {
           return;
         }
