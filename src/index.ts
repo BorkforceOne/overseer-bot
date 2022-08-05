@@ -29,6 +29,7 @@ import { SwearBotHook } from "./hooks/swearbot/swearbot";
 import { InfoHook } from "./hooks/info/info";
 import { ListHook } from "./hooks/list/list";
 import { GetHook } from "./hooks/get/get";
+import { ImagineHook } from "./hooks/imagine/imagine";
 import { ListService } from "./services/app/list_service";
 
 export const ENABLED_HOOKS = [
@@ -51,6 +52,7 @@ export const ENABLED_HOOKS = [
     "listHook",
     "getHook",
     "roleBotHook",
+    "imagineHook",
 ];
 
 class Main {
@@ -105,6 +107,7 @@ function registerServices() {
     ServiceRegistrySingleton.addService("listHook", ListHook);
     ServiceRegistrySingleton.addService("getHook", GetHook);
     ServiceRegistrySingleton.addService("roleBotHook", RoleBotHook);
+    ServiceRegistrySingleton.addService("imagineHook", ImagineHook);
 }
 
 registerServices();
