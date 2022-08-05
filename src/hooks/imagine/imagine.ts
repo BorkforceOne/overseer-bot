@@ -5,7 +5,7 @@ import { throttle } from "../../services/throttle/throttle";
 import { TimeThrottleStrategyService } from "../../services/throttle/timeThrottleStrategy.service";
 import { Hook } from "../../utils/hook";
 
-const DURATION_BEFORE_FIRING_AGAIN_MS = 30 * 60 * 1000; // 30 minutes
+const DURATION_BEFORE_FIRING_AGAIN_MS = 10 * 60 * 1000; // 10 minutes
 
 const endpoint = "https://backend.craiyon.com/generate";
 
