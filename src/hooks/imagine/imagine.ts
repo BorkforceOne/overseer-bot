@@ -88,23 +88,25 @@ export class ImagineHook implements Hook {
     const images = res.data.images as string[];
     const embeds: EmbedBuilder[] = [];
     const attachments: AttachmentBuilder[] = [];
-    for (let i = 0; i < images.length; i ++) {
+    const totalSets = Math.floor(images.length / 4);
+    for (let i = 0; i < totalSets * 4; i ++) {
+      const currentSet = Math.floor(i / 4);
       const bufferedImage = Buffer.from(images[i], 'base64');
       const attachment = new AttachmentBuilder(bufferedImage)
                         .setName(`imagine${i}.png`);
-      embeds.push(
-        new EmbedBuilder()
+      const embed = new EmbedBuilder()
         .setImage(`attachment://imagine${i}.png`)
-        .setURL("https://www.craiyon.com/")
-      );
+        .setURL(`https://www.craiyon.com/?x=${currentSet}`);
+      if (i % 4 === 0) {
+        embed
+        .setTitle(`Imagining ${prompt}... (${currentSet + 1}/${totalSets})`)
+        .setFooter({
+          text: 'Brought to you buy craiyon',
+        });
+      }
+      embeds.push(embed);
       attachments.push(attachment);
     }
-    embeds[0]
-    .setTitle(`Imagining ${prompt}...`)
-    .setDescription('...')
-    .setFooter({
-      text: 'Brought to you buy craiyon',
-    });
     return msg.reply({
       embeds,
       files: attachments,
