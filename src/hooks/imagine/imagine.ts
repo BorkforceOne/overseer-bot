@@ -6,6 +6,7 @@ import { RandomThrottleStrategyService } from "../../services/throttle/randomThr
 import { throttle } from "../../services/throttle/throttle";
 import { TimeThrottleStrategyService } from "../../services/throttle/timeThrottleStrategy.service";
 import { Hook } from "../../utils/hook";
+import { Direction, mergeImg } from "./image-utils";
 
 const DURATION_BEFORE_FIRING_AGAIN_MS = 10 * 60 * 1000; // 10 minutes
 
@@ -57,7 +58,6 @@ export class ImagineHook implements Hook {
     const { client } = this;
 
     client.on("messageCreate", async (msg) => {
-      console.log(msg);
       if (msg.member?.user?.bot !== false) {
         return;
       }
@@ -86,24 +86,19 @@ export class ImagineHook implements Hook {
     }
 
     const images = res.data.images as string[];
+    const rawBuffers = images.map((image) => Buffer.from(image, 'base64'));
+    const finalImages = await mergeImages(rawBuffers);
     const embeds: EmbedBuilder[] = [];
     const attachments: AttachmentBuilder[] = [];
-    const totalSets = Math.floor(images.length / 4);
-    for (let i = 0; i < totalSets * 4; i ++) {
-      const currentSet = Math.floor(i / 4);
-      const bufferedImage = Buffer.from(images[i], 'base64');
-      const attachment = new AttachmentBuilder(bufferedImage)
+    for (let i = 0; i < finalImages.length; i ++) {
+      const attachment = new AttachmentBuilder(finalImages[i])
                         .setName(`imagine${i}.png`);
       const embed = new EmbedBuilder()
         .setImage(`attachment://imagine${i}.png`)
-        .setURL(`https://www.craiyon.com/?x=${currentSet}`);
-      if (i % 4 === 0) {
-        embed
-        .setTitle(`Imagining ${prompt}... (${currentSet + 1}/${totalSets})`)
+        .setTitle(`Imagining ${prompt}... (${i + 1}/${finalImages.length})`)
         .setFooter({
           text: 'Brought to you buy craiyon',
         });
-      }
       embeds.push(embed);
       attachments.push(attachment);
     }
@@ -131,6 +126,20 @@ const match: (msg: string) => Instruction | undefined = (msg: string) => ([
     } as Instruction;
   },
 ].find(m => m(msg.toLowerCase())) || (() => undefined))(msg);
+
+async function mergeImages(images: Buffer[]): Promise<Buffer[]> {
+  const outImages: Buffer[] = [];
+
+  const totalSets = Math.floor(images.length / 4);
+  for (let i = 0; i < totalSets; i ++) {
+    const horizontal1 = await mergeImg([images[i * 4 + 0], images[i * 4 + 1]], {direction: Direction.HORIZONTAL, offset: 10});
+    const horizontal2 = await mergeImg([images[i * 4 + 2], images[i * 4 + 3]], {direction: Direction.HORIZONTAL, offset: 10});
+    const final = await mergeImg([horizontal1, horizontal2], {direction: Direction.VERTICAL, offset: 10});
+    outImages.push(final);
+  }
+
+  return outImages;
+}
 
 type Instruction = 
 {

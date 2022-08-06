@@ -180,7 +180,6 @@ rm movies Boondock Saints
           const m = lists
             .map(l => `${l.data.name}: ${l.data.items.ids.length}`)
             .join('\n') || 'None';
-            console.log(m);
           const resp = new EmbedBuilder()
             .setAuthor(
               {
