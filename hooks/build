@@ -1,5 +1,0 @@
-#!/usr/bin/env sh
-
-# These come from https://docs.docker.com/docker-cloud/builds/advanced/
-
-docker build --build-arg SOURCE_COMMIT=$(git rev-parse --short HEAD) -f $DOCKERFILE_PATH -t $IMAGE_NAME .

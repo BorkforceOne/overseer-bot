@@ -76,7 +76,7 @@ export class ImagineHook implements Hook {
   public async reply({prompt, msg}: {prompt: string, msg: Message}) {
     console.log(`Requesting prompt: '${prompt}'`);
 
-    msg.reply('Hmmm...');
+    const hmmMessage = await msg.reply('Hmmm...');
     const res = await axios.post(endpoint, {
       prompt,
     });
@@ -87,25 +87,22 @@ export class ImagineHook implements Hook {
 
     const images = res.data.images as string[];
     const rawBuffers = images.map((image) => Buffer.from(image, 'base64'));
-    const finalImages = await mergeImages(rawBuffers);
-    const embeds: EmbedBuilder[] = [];
-    const attachments: AttachmentBuilder[] = [];
-    for (let i = 0; i < finalImages.length; i ++) {
-      const attachment = new AttachmentBuilder(finalImages[i])
-                        .setName(`imagine${i}.png`);
-      const embed = new EmbedBuilder()
-        .setImage(`attachment://imagine${i}.png`)
-        .setTitle(`Imagining ${prompt}... (${i + 1}/${finalImages.length})`)
-        .setFooter({
-          text: 'Brought to you buy craiyon',
-        });
-      embeds.push(embed);
-      attachments.push(attachment);
-    }
-    return msg.reply({
-      embeds,
-      files: attachments,
+    const finalImage = await mergeImages(rawBuffers);
+
+    const attachment = new AttachmentBuilder(finalImage)
+      .setName(`imagine.png`);
+    const embed = new EmbedBuilder()
+      .setImage(`attachment://imagine.png`)
+      .setTitle(`Imagining ${prompt}...`)
+      .setFooter({
+        text: 'Brought to you buy craiyon',
+      });
+    
+    await msg.reply({
+      embeds: [embed],
+      files: [attachment],
     });
+    await hmmMessage.delete();
   }
 } 
 
@@ -127,18 +124,13 @@ const match: (msg: string) => Instruction | undefined = (msg: string) => ([
   },
 ].find(m => m(msg.toLowerCase())) || (() => undefined))(msg);
 
-async function mergeImages(images: Buffer[]): Promise<Buffer[]> {
-  const outImages: Buffer[] = [];
+async function mergeImages(images: Buffer[]): Promise<Buffer> {
+  const horizontal1 = await mergeImg([images[0], images[1], images[2]], {direction: Direction.HORIZONTAL, offset: 10});
+  const horizontal2 = await mergeImg([images[3], images[4], images[5]], {direction: Direction.HORIZONTAL, offset: 10});
+  const horizontal3 = await mergeImg([images[6], images[7], images[8]], {direction: Direction.HORIZONTAL, offset: 10});
+  const final = await mergeImg([horizontal1, horizontal2, horizontal3], {direction: Direction.VERTICAL, offset: 10});
 
-  const totalSets = Math.floor(images.length / 4);
-  for (let i = 0; i < totalSets; i ++) {
-    const horizontal1 = await mergeImg([images[i * 4 + 0], images[i * 4 + 1]], {direction: Direction.HORIZONTAL, offset: 10});
-    const horizontal2 = await mergeImg([images[i * 4 + 2], images[i * 4 + 3]], {direction: Direction.HORIZONTAL, offset: 10});
-    const final = await mergeImg([horizontal1, horizontal2], {direction: Direction.VERTICAL, offset: 10});
-    outImages.push(final);
-  }
-
-  return outImages;
+  return final;
 }
 
 type Instruction = 
