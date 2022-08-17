@@ -1,11 +1,12 @@
 export interface IOption {
   id: number;
   content: string;
+  emojiId: string;
 }
 
 export interface IVote {
   userId: string;
-  optionId: number;
+  optionId: string;
 }
 
 
@@ -19,4 +20,6 @@ export interface IIssue {
   votes: IVote[];
   state: IssueState;
   result?: number;
+  messageId: string;
+  ownerId: string;
 }
