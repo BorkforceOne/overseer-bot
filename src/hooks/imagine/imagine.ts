@@ -95,7 +95,7 @@ export class ImagineHook implements Hook {
       .setImage(`attachment://imagine.png`)
       .setTitle(`Imagining ${prompt}...`)
       .setFooter({
-        text: 'Brought to you buy craiyon',
+        text: 'Brought to you by craiyon',
       });
     
     await msg.reply({
