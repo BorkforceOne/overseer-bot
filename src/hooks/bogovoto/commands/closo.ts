@@ -10,40 +10,50 @@ import { BogoVotoHook, CloseCode } from '../bogovoto';
  * @param args 
  */
 export async function closo(bogo: BogoVotoHook, msg: Message, args: string[]) {
-  if (args.length !== 1) {
-    msg.reply('The usage is `/closo issueId`');
-    return;
-  }
+    if (args.length !== 1) {
+        msg.reply('The usage is `/closo [voto id]`');
+        return;
+    }
 
-  const issueId = toIntOrNull(args[0]);
+    const issueId = toIntOrNull(args[0]);
 
-  if (issueId === null) {
-    msg.reply('I don\'t know what that is!');
-    return;
-  }
+    if (issueId === null) {
+        return;
+    }
 
-  const issue = bogo.GetIssue(issueId);
+    const issue = bogo.GetIssue(issueId);
 
-  if (!issue) {
-    msg.reply('That bogovote doesn\'t exist, silly!');
-    return;
-  }
+    if (!issue) {
+        return;
+    }
 
-  const [closeCode, winningOption] = bogo.CloseIssue(issue.id);
+    if (msg.author.id !== issue.ownerId) {
+        return;
+    }
 
-  switch (closeCode) {
-    case CloseCode.ALREADY_CLOSED:
-      msg.reply(`This bogovoto has already been closed, with the result: '${winningOption!.content}'`);
-      return;
-    case CloseCode.ISSUE_DNE:
-      msg.reply('That bogovote doesn\'t exist, silly!');
-      return;
-    case CloseCode.CLOSED:
-      msg.channel.send(`Alright the votes are in! Let's see who won...`);
-      msg.channel.send(`This time, it's '${winningOption!.content}'`);
-      break;
-    case CloseCode.NO_VOTES:
-      msg.reply('There are no votes for this yet. Not closing the bogovoto yet!');
-      break;
-  }
+    const [closeCode, winningOption] = bogo.CloseIssue(issue.id);
+
+    switch (closeCode) {
+        case CloseCode.ALREADY_CLOSED: {
+            if (winningOption) {
+                msg.reply(`This bogovoto has already been closed, with the result: '${winningOption.content}'`);
+            }
+            else {
+                msg.reply('This bogovoto was already closed with no votes.');
+            }
+            break;
+        }
+        case CloseCode.ISSUE_DNE: {
+            msg.reply('That bogovote doesn\'t exist!');
+            break;
+        }
+        case CloseCode.CLOSED: {
+            msg.channel.send(`Alright the votes are in! Let's see who won...\nThis time, it's '${winningOption!.content}'`);
+            break;
+        }
+        case CloseCode.NO_VOTES: {
+            msg.reply('Closed with no votes.');
+            break;
+        }
+    }
 }
