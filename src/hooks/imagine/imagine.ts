@@ -1,8 +1,6 @@
 import axios from "axios";
 import { Client, Message, AttachmentBuilder, EmbedBuilder } from "discord.js";
 import { DiscordService } from "../../services/app/discord_service";
-import { AndThrottleStrategyService } from "../../services/throttle/andThrottleStrategy.service";
-import { RandomThrottleStrategyService } from "../../services/throttle/randomThrottleStrategy.service";
 import { throttle } from "../../services/throttle/throttle";
 import { TimeThrottleStrategyService } from "../../services/throttle/timeThrottleStrategy.service";
 import { Hook } from "../../utils/hook";
@@ -11,11 +9,6 @@ import { Direction, mergeImg } from "./image-utils";
 const DURATION_BEFORE_FIRING_AGAIN_MS = 10 * 60 * 1000; // 10 minutes
 
 const endpoint = "https://backend.craiyon.com/generate";
-
-interface FireParams {
-  prompt: string;
-  msg: Message;
-}
 
 export class ImagineHook implements Hook {
   private readonly client: Client;
@@ -29,27 +22,9 @@ export class ImagineHook implements Hook {
     ],
   });
 
-  private readonly randomReply = throttle({
-    fire: this.reply,
-    throttleStrategies: [
-      this.andThrottleStrategyService.getStrategy({
-        throttles: [
-          this.randomThrottleStrategyService.getStrategy({
-            chance: 1 / 200,
-          }),
-          this.timeThrottleStrategyService.getStrategy({
-            durationBeforeFiringAgainMs: DURATION_BEFORE_FIRING_AGAIN_MS
-          }),
-        ],
-      })
-    ],
-  });
-
   constructor(
     private readonly discordService: DiscordService,
     private readonly timeThrottleStrategyService: TimeThrottleStrategyService,
-    private readonly randomThrottleStrategyService: RandomThrottleStrategyService,
-    private readonly andThrottleStrategyService: AndThrottleStrategyService<FireParams>,
   ) {
     this.client = this.discordService.getClient();
   }
@@ -65,7 +40,6 @@ export class ImagineHook implements Hook {
       const instruction = match(msg.content);
 
       if (!instruction) {
-        this.randomReply({prompt: msg.content, msg});
         return;
       }
   
