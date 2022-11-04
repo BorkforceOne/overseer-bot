@@ -1,5 +1,5 @@
-import axios from "axios";
-import { Client, Message, AttachmentBuilder, EmbedBuilder } from "discord.js";
+import { AttachmentBuilder, Client, EmbedBuilder, Message } from "discord.js";
+import { Configuration, OpenAIApi } from "openai";
 import { DiscordService } from "../../services/app/discord_service";
 import { throttle } from "../../services/throttle/throttle";
 import { TimeThrottleStrategyService } from "../../services/throttle/timeThrottleStrategy.service";
@@ -8,7 +8,10 @@ import { Direction, mergeImg } from "./image-utils";
 
 const DURATION_BEFORE_FIRING_AGAIN_MS = 10 * 60 * 1000; // 10 minutes
 
-const endpoint = "https://backend.craiyon.com/generate";
+const dalleConfig = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY
+});
+const dalle = new OpenAIApi(dalleConfig);
 
 export class ImagineHook implements Hook {
   private readonly client: Client;
@@ -43,24 +46,24 @@ export class ImagineHook implements Hook {
         return;
       }
   
-      this.throttledReply({prompt: instruction.prompt, msg});  
+      this.throttledReply({prompt: instruction.prompt, user: msg.member.user.id, msg});
     });
   }
   
-  public async reply({prompt, msg}: {prompt: string, msg: Message}) {
-    console.log(`Requesting prompt: '${prompt}'`);
+  public async reply({prompt, user, msg}: {prompt: string, user: string, msg: Message}) {
+    console.log(`Requesting prompt: '${prompt} for user: ${user}'`);
 
     const hmmMessage = await msg.reply('Hmmm...');
-    const res = await axios.post(endpoint, {
+
+    const response = await dalle.createImage({
       prompt,
+      n: 9,
+      size: "256x256",
+      response_format: "b64_json",
+      user
     });
 
-    if (res.status !== 200) {
-      return;
-    }
-
-    const images = res.data.images as string[];
-    const rawBuffers = images.map((image) => Buffer.from(image, 'base64'));
+    const rawBuffers = response.data.data.map((image) => Buffer.from(image.b64_json!, 'base64'));
     const finalImage = await mergeImages(rawBuffers);
 
     const attachment = new AttachmentBuilder(finalImage)
@@ -69,7 +72,7 @@ export class ImagineHook implements Hook {
       .setImage(`attachment://imagine.png`)
       .setTitle(`Imagining ${prompt}...`)
       .setFooter({
-        text: 'Brought to you by craiyon',
+        text: 'Brought to you by DALL-E 2',
       });
     
     await msg.reply({
