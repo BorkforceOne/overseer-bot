@@ -20,12 +20,14 @@
     "jimp": "^0.16.1",
     "mkdirp": "^1.0.4",
     "profanease": "^1.1.2",
+    "sharp": "^0.31.2",
     "typescript": "^4.4.4"
   },
   "devDependencies": {
     "@types/cheerio": "^0.22.22",
     "@types/jest": "^24.9.1",
     "@types/node": "^16.11.7",
+    "@types/sharp": "^0.31.0",
     "@types/ws": "^7.4.0",
     "dotenv": "^6.2.0",
     "jest": "^24.9.0",

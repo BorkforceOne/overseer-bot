@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Client, Message, AttachmentBuilder, EmbedBuilder } from "discord.js";
+import sharp = require("sharp");
 import { DiscordService } from "../../services/app/discord_service";
 import { throttle } from "../../services/throttle/throttle";
 import { TimeThrottleStrategyService } from "../../services/throttle/timeThrottleStrategy.service";
@@ -51,32 +52,41 @@ export class ImagineHook implements Hook {
     console.log(`Requesting prompt: '${prompt}'`);
 
     const hmmMessage = await msg.reply('Hmmm...');
-    const res = await axios.post(endpoint, {
-      prompt,
-    });
 
-    if (res.status !== 200) {
-      return;
-    }
-
-    const images = res.data.images as string[];
-    const rawBuffers = images.map((image) => Buffer.from(image, 'base64'));
-    const finalImage = await mergeImages(rawBuffers);
-
-    const attachment = new AttachmentBuilder(finalImage)
-      .setName(`imagine.png`);
-    const embed = new EmbedBuilder()
-      .setImage(`attachment://imagine.png`)
-      .setTitle(`Imagining ${prompt}...`)
-      .setFooter({
-        text: 'Brought to you by craiyon',
+    try {
+      const res = await axios.post(endpoint, {
+        prompt,
       });
-    
-    await msg.reply({
-      embeds: [embed],
-      files: [attachment],
-    });
-    await hmmMessage.delete();
+  
+      if (res.status !== 200) {
+        throw new Error('API returned non-ok response.');
+      }
+  
+      const images = res.data.images as string[];
+      const rawBuffers = images.map((image) => Buffer.from(image, 'base64'));
+      const pngBuffers = await Promise.all(rawBuffers.map((buffer) => sharp(buffer).png().toBuffer()));
+      const finalImage = await mergeImages(pngBuffers);
+  
+      const attachment = new AttachmentBuilder(finalImage)
+        .setName(`imagine.png`);
+      const embed = new EmbedBuilder()
+        .setImage(`attachment://imagine.png`)
+        .setTitle(`Imagining ${prompt}...`)
+        .setFooter({
+          text: 'Brought to you by craiyon',
+        });
+      
+      await msg.reply({
+        embeds: [embed],
+        files: [attachment],
+      });  
+    }
+    catch(e) {
+      await msg.reply("I'm sorry, I didn't understand.");
+    }
+    finally {
+      await hmmMessage.delete();
+    }
   }
 } 
 
