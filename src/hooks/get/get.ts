@@ -54,6 +54,11 @@ export class GetHook implements Hook {
 
 const match: (msg: string) => Instruction | undefined = (msg: string) => ([
   (msg: string) => {
+    // Skip processing if the message starts with !n7m or !claude
+    if (msg.toLowerCase().startsWith('!n7m') || msg.toLowerCase().startsWith('!claude')) {
+      return;
+    }
+    
     const patterns: RegExp[] = [
       /^show me\s+(.+)$/i,
       /^show\s+(.+)$/i,
