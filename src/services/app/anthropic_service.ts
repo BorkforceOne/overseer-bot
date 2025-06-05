@@ -1,4 +1,5 @@
 import { config } from '../../utils/config';
+import axios from 'axios';
 
 // Define types for Anthropic API requests and responses
 interface AnthropicMessageContent {
@@ -85,25 +86,23 @@ export class AnthropicService {
     };
 
     try {
-      const response = await fetch(this.apiUrl, {
-        method: 'POST',
+      const response = await axios.post(this.apiUrl, requestBody, {
         headers: {
           'Content-Type': 'application/json',
           'x-api-key': this.apiKey,
           'anthropic-version': '2023-06-01'
-        },
-        body: JSON.stringify(requestBody)
+        }
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(`Anthropic API error: ${response.status} ${response.statusText} - ${JSON.stringify(errorData)}`);
-      }
-
-      return await response.json() as AnthropicChatCompletionResponse;
+      return response.data as AnthropicChatCompletionResponse;
     } catch (error) {
-      console.error('Error calling Anthropic API:', error);
-      throw error;
+      if (axios.isAxiosError(error) && error.response) {
+        console.error('Error calling Anthropic API:', error.response.status, error.response.statusText);
+        throw new Error(`Anthropic API error: ${error.response.status} ${error.response.statusText} - ${JSON.stringify(error.response.data)}`);
+      } else {
+        console.error('Error calling Anthropic API:', error);
+        throw error;
+      }
     }
   }
 
