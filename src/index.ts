@@ -33,6 +33,7 @@ import { ImagineHook } from "./hooks/imagine/imagine";
 import { ListService } from "./services/app/list_service";
 import { AnthropicService } from "./services/app/anthropic_service";
 import { ClaudeHook } from "./hooks/claude/claude";
+import { N7MHook } from "./hooks/n7m/n7m";
 
 export const ENABLED_HOOKS = [
     "acromeanHook",
@@ -56,6 +57,7 @@ export const ENABLED_HOOKS = [
     "roleBotHook",
     "imagineHook",
     "claudeHook",
+    "n7mHook",
 ];
 
 class Main {
@@ -113,6 +115,7 @@ function registerServices() {
     ServiceRegistrySingleton.addService("roleBotHook", RoleBotHook);
     ServiceRegistrySingleton.addService("imagineHook", ImagineHook);
     ServiceRegistrySingleton.addService("claudeHook", ClaudeHook);
+    ServiceRegistrySingleton.addService("n7mHook", N7MHook);
 }
 
 registerServices();
