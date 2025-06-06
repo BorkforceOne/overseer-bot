@@ -54,8 +54,8 @@ export class GetHook implements Hook {
 
 const match: (msg: string) => Instruction | undefined = (msg: string) => ([
   (msg: string) => {
-    // Skip processing if the message starts with !n7m, !claude, or !unn7m
-    if (msg.toLowerCase().startsWith('!n7m') || msg.toLowerCase().startsWith('!claude') || msg.toLowerCase().startsWith('!unn7m')) {
+    // Skip processing if the message starts with !n7m, !overseer, or !unn7m
+    if (msg.toLowerCase().startsWith('!n7m') || msg.toLowerCase().startsWith('!overseer') || msg.toLowerCase().startsWith('!unn7m')) {
       return;
     }
     

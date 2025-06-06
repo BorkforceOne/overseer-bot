@@ -16,12 +16,10 @@ describe('get', () => {
       expect(searchTerm).toEqual(expected);
     })); 
     
-  // Test that messages starting with !n7m or !claude don't match
+  // Test that messages starting with !n7m don't match
   const nonMatchingTests = [
     '!n7m hello',
     '!n7m',
-    '!claude help',
-    '!claude',
   ];
   
   nonMatchingTests.forEach((test) =>

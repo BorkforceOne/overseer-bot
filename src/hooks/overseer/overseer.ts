@@ -1,15 +1,16 @@
 import { Hook } from '../../utils/hook';
 import { Client, Message } from 'discord.js';
 import { DiscordService } from '../../services/app/discord_service';
-import { AnthropicService } from '../../services/app/anthropic_service';
+import { DeepSeekService } from '../../services/app/deepseek_service';
+import { OVERSEER_PROMPT } from '../../utils/prompts';
 
-export class ClaudeHook implements Hook {
+export class OverseerHook implements Hook {
   private readonly client: Client;
-  private readonly prefix: string = '!claude';
+  private readonly prefix: string = '!overseer';
 
   constructor(
     private readonly discordService: DiscordService,
-    private readonly anthropicService: AnthropicService
+    private readonly deepseekService: DeepSeekService
   ) {
     this.client = this.discordService.getClient();
   }
@@ -23,28 +24,30 @@ export class ClaudeHook implements Hook {
 
       // Check if the message starts with the prefix
       if (msg.content.startsWith(this.prefix)) {
-        await this.handleClaudeCommand(msg);
+        await this.handleOverseerCommand(msg);
       }
     });
 
-    console.log('Claude hook initialized');
+    console.log('Overseer hook initialized');
   }
 
-  private async handleClaudeCommand(msg: Message) {
+  private async handleOverseerCommand(msg: Message) {
     try {
       // Extract the prompt from the message (remove the prefix)
       const prompt = msg.content.substring(this.prefix.length).trim();
       
       if (!prompt) {
-        await msg.reply('Please provide a prompt for Claude. Usage: `!claude your question here`');
+        await msg.reply('Please provide a prompt for Overseer. Usage: `!overseer your question here`');
         return;
       }
 
       // Let the user know we're processing their request
       const loadingMessage = await msg.reply('Thinking...');
       
-      // Get completion from Claude
-      const response = await this.anthropicService.getCompletion(prompt, {
+      // Get completion from DeepSeek using the OVERSEER_PROMPT
+      const fullPrompt = `${OVERSEER_PROMPT}\n\n${prompt}`;
+      
+      const response = await this.deepseekService.getCompletion(fullPrompt, {
         maxTokens: 1000,
         temperature: 0.7
       });
@@ -60,7 +63,7 @@ export class ClaudeHook implements Hook {
         await msg.reply(chunk);
       }
     } catch (error) {
-      console.error('Error in Claude hook:', error);
+      console.error('Error in Overseer hook:', error);
       await msg.reply('Sorry, I encountered an error while processing your request.');
     }
   }
