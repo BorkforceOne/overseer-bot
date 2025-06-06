@@ -7,6 +7,7 @@ function getConfig() {
       discordApiKey: process.env.API_KEY,
       firebaseSecretsPath: process.env.FIREBASE_SECRETS_PATH,
       anthropicApiKey: process.env.ANTHROPIC_API_KEY,
+      deepseekApiKey: process.env.DEEPSEEK_API_KEY,
     });
   } catch (error) {
     console.warn('Warning: Some configuration variables could not be loaded. Using fallback values.');
@@ -16,6 +17,7 @@ function getConfig() {
       discordApiKey: process.env.API_KEY || '',
       firebaseSecretsPath: process.env.FIREBASE_SECRETS_PATH || '',
       anthropicApiKey: process.env.ANTHROPIC_API_KEY || '',
+      deepseekApiKey: process.env.DEEPSEEK_API_KEY || '',
     };
   }
 }

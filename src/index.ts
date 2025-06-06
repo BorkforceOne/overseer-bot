@@ -32,7 +32,8 @@ import { GetHook } from "./hooks/get/get";
 import { ImagineHook } from "./hooks/imagine/imagine";
 import { ListService } from "./services/app/list_service";
 import { AnthropicService } from "./services/app/anthropic_service";
-import { ClaudeHook } from "./hooks/claude/claude";
+import { DeepSeekService } from "./services/app/deepseek_service";
+import { OverseerHook } from "./hooks/overseer/overseer";
 import { N7MHook } from "./hooks/n7m/n7m";
 import { Unn7mHook } from "./hooks/unn7m/unn7m";
 
@@ -57,7 +58,7 @@ export const ENABLED_HOOKS = [
     "getHook",
     "roleBotHook",
     "imagineHook",
-    "claudeHook",
+    "overseerHook",
     "n7mHook",
     "unn7mHook",
 ];
@@ -95,6 +96,7 @@ function registerServices() {
     ServiceRegistrySingleton.addService("randomThrottleStrategyService", RandomThrottleStrategyService);
     ServiceRegistrySingleton.addService("listService", ListService);
     ServiceRegistrySingleton.addService("anthropicService", AnthropicService);
+    ServiceRegistrySingleton.addService("deepseekService", DeepSeekService);
 
     ServiceRegistrySingleton.addService("acromeanHook", AcromeanHook);
     ServiceRegistrySingleton.addService("bogovotoHook", BogoVotoHook);
@@ -116,7 +118,7 @@ function registerServices() {
     ServiceRegistrySingleton.addService("getHook", GetHook);
     ServiceRegistrySingleton.addService("roleBotHook", RoleBotHook);
     ServiceRegistrySingleton.addService("imagineHook", ImagineHook);
-    ServiceRegistrySingleton.addService("claudeHook", ClaudeHook);
+    ServiceRegistrySingleton.addService("overseerHook", OverseerHook);
     ServiceRegistrySingleton.addService("n7mHook", N7MHook);
     ServiceRegistrySingleton.addService("unn7mHook", Unn7mHook);
 }
