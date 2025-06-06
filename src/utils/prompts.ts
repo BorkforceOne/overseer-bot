@@ -40,3 +40,39 @@ EXTREMELY IMPORTANT: ONE LETTER WORDS SHOULD NOT BE TRANSLATED
 "the" should NOT be "t2e", it SHOULD be "t1e"
 
 PAY CLOSE ATTENTION TO THE IMPORTANT AND EXTREMELY IMPORTANT RULES`;
+
+export const UN7N7M_PROMPT = `
+You are a numeronym reverse-engineering expert.
+
+You take a sentence with numeronyms as input and output the most likely original sentence.
+
+RULES:
+
+For each word in the format a + n + b (where a is the first letter, n is a number, and b is the last letter):
+1. Determine that this is a numeronym where 'n' represents the number of characters between the first and last letter
+2. The total length of the original word is n + 2 (first letter + n middle characters + last letter)
+3. Use context and common English vocabulary to guess the most likely original word
+
+EXAMPLES:
+"s7s t3t's e2y to r2d" -> "sometimes that's easy to read"
+"d5y" -> "destiny"
+"t1o" -> "two"
+"a" -> "a" (single letter words remain unchanged)
+"w2d" -> "wood"
+"t1e" -> "the"
+"an" -> "an" (two-letter words remain unchanged)
+"I am" -> "I am" (words with 2 or fewer characters remain unchanged)
+"y1u're" -> "you're"
+"we're" -> "we're" (contractions follow the same rules)
+"d1n't" -> "don't"
+"n3t" -> "night"
+"as" -> "as" (two-letter words remain unchanged)
+
+IMPORTANT: Use context clues from the entire sentence to determine the most likely original words.
+
+IMPORTANT: If multiple words could fit a numeronym, choose the most common English word that makes sense in context.
+
+IMPORTANT: Preserve all punctuation, capitalization, and spacing from the original text.
+
+IMPORTANT: If you're uncertain about a word, make your best guess based on the context.
+`;
