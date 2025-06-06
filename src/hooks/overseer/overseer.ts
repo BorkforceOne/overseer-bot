@@ -1,7 +1,7 @@
 import { Hook } from '../../utils/hook';
 import { Client, Message } from 'discord.js';
 import { DiscordService } from '../../services/app/discord_service';
-import { AnthropicService } from '../../services/app/anthropic_service';
+import { DeepSeekService } from '../../services/app/deepseek_service';
 import { OVERSEER_PROMPT } from '../../utils/prompts';
 
 export class OverseerHook implements Hook {
@@ -10,7 +10,7 @@ export class OverseerHook implements Hook {
 
   constructor(
     private readonly discordService: DiscordService,
-    private readonly anthropicService: AnthropicService
+    private readonly deepseekService: DeepSeekService
   ) {
     this.client = this.discordService.getClient();
   }
@@ -44,10 +44,10 @@ export class OverseerHook implements Hook {
       // Let the user know we're processing their request
       const loadingMessage = await msg.reply('Thinking...');
       
-      // Get completion from Claude using the OVERSEER_PROMPT
+      // Get completion from DeepSeek using the OVERSEER_PROMPT
       const fullPrompt = `${OVERSEER_PROMPT}\n\n${prompt}`;
       
-      const response = await this.anthropicService.getCompletion(fullPrompt, {
+      const response = await this.deepseekService.getCompletion(fullPrompt, {
         maxTokens: 1000,
         temperature: 0.7
       });

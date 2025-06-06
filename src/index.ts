@@ -32,6 +32,7 @@ import { GetHook } from "./hooks/get/get";
 import { ImagineHook } from "./hooks/imagine/imagine";
 import { ListService } from "./services/app/list_service";
 import { AnthropicService } from "./services/app/anthropic_service";
+import { DeepSeekService } from "./services/app/deepseek_service";
 import { OverseerHook } from "./hooks/overseer/overseer";
 import { N7MHook } from "./hooks/n7m/n7m";
 import { Unn7mHook } from "./hooks/unn7m/unn7m";
@@ -95,6 +96,7 @@ function registerServices() {
     ServiceRegistrySingleton.addService("randomThrottleStrategyService", RandomThrottleStrategyService);
     ServiceRegistrySingleton.addService("listService", ListService);
     ServiceRegistrySingleton.addService("anthropicService", AnthropicService);
+    ServiceRegistrySingleton.addService("deepseekService", DeepSeekService);
 
     ServiceRegistrySingleton.addService("acromeanHook", AcromeanHook);
     ServiceRegistrySingleton.addService("bogovotoHook", BogoVotoHook);
